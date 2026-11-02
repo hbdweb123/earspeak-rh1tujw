@@ -1,2 +1,3 @@
+.wordcache/
 *.json
 !feed.xml

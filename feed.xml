@@ -6,13 +6,13 @@
   <channel>
     <title>Earspeak 骑行英语</title>
     <link>https://hbdweb123.github.io/earspeak-rh1tujw</link>
-    <description>骑车时听的英语听力训练。每集：中文场景 → 逐词慢读（词间留白）→ 整句慢读 → 整句常速。</description>
+    <description>骑车时听的英语听力训练。逐词慢读（每个词独立完整发音 + 留白跟读）→ 整句慢读 → 整句常速。</description>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 02 Nov 2026 14:34:06 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 21:40:23 +0800</lastBuildDate>
     <generator>Earspeak</generator>
     <atom:link href="https://hbdweb123.github.io/earspeak-rh1tujw/feed.xml" rel="self" type="application/rss+xml"/>
     <itunes:author>老王</itunes:author>
-    <itunes:summary>骑车时听的英语听力训练。每集：中文场景 → 逐词慢读（词间留白）→ 整句慢读 → 整句常速。</itunes:summary>
+    <itunes:summary>骑车时听的英语听力训练。逐词慢读（每个词独立完整发音 + 留白跟读）→ 整句慢读 → 整句常速。</itunes:summary>
     <itunes:explicit>false</itunes:explicit>
     <itunes:type>episodic</itunes:type>
     <itunes:block>Yes</itunes:block>
@@ -23,12 +23,21 @@
       <itunes:name>老王</itunes:name>
     </itunes:owner>
     <item>
-      <title>第 1 集 · 路上问路五句话</title>
-      <description>这辆车能带上地铁吗 / 前面路口左转 / 我手机没电了 / 这个多少钱一天 / 最近的修车铺在哪</description>
-      <enclosure url="https://hbdweb123.github.io/earspeak-rh1tujw/audio/ep001.m4a" length="434559" type="audio/mp4"/>
-      <guid isPermaLink="false">earspeak-ep-001</guid>
-      <pubDate>Mon, 02 Nov 2026 14:30:00 +0800</pubDate>
-      <itunes:duration>01:55</itunes:duration>
+      <title>节奏对比 B · 慢30% 词间1.5s（单句试听）</title>
+      <description>同一句话（这辆车能带上地铁吗）的更慢版本，词长 0.55~0.97s、停顿 1.5s。用来和 A 对比节奏。</description>
+      <enclosure url="https://hbdweb123.github.io/earspeak-rh1tujw/audio/ep004.m4a" length="110886" type="audio/mp4"/>
+      <guid isPermaLink="false">earspeak-v5-B</guid>
+      <pubDate>Mon, 02 Nov 2026 21:50:00 +0800</pubDate>
+      <itunes:duration>00:29</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>节奏对比 A · 慢20% 词间1.2s（完整5句）</title>
+      <description>这辆车能带上地铁吗 / 前面路口左转 / 我手机没电了 / 这个多少钱一天 / 最近的修车铺在哪。每个词独立完整发音，词长均匀 0.46~1.17s。</description>
+      <enclosure url="https://hbdweb123.github.io/earspeak-rh1tujw/audio/ep003.m4a" length="556375" type="audio/mp4"/>
+      <guid isPermaLink="false">earspeak-v5-A</guid>
+      <pubDate>Mon, 02 Nov 2026 21:45:00 +0800</pubDate>
+      <itunes:duration>02:22</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
     </item>
   </channel>
