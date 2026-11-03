@@ -1,0 +1,32 @@
+[
+ {
+  "no": 5,
+  "title": "我注意到这批货没按计划到，能（1/2）",
+  "file": "ep005.m4a",
+  "duration": 149.1,
+  "size": 635736,
+  "lufs": "-16.5",
+  "at": "2026-11-03T21:12:35+08:00",
+  "sentences": [
+   "I noticed the shipment hasn't arrived as scheduled. Could you tell me what's going on?",
+   "I understand, but I need a specific date. When can you guarantee delivery?",
+   "Let's put that in writing. If it slips again, we'll need to discuss compensation."
+  ],
+  "desc": "我注意到这批货没按计划到，能说说是什 / 我理解，但我需要一个具体日期。什么时 / 我们把这个写下来。如果再延，需要谈赔"
+ },
+ {
+  "no": 6,
+  "title": "我们最晚下周三能确认到货（2/2）",
+  "file": "ep006.m4a",
+  "duration": 82.1,
+  "size": 320851,
+  "lufs": "-16.3",
+  "at": "2026-11-03T21:13:03+08:00",
+  "sentences": [
+   "We can confirm arrival by next Wednesday at the latest.",
+   "Could you tell me why the shipment was delayed?",
+   "That's my best."
+  ],
+  "desc": "我们最晚下周三能确认到货。 / 能告诉我货为什么延误吗？ / 这是我的底线。"
+ }
+]

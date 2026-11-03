@@ -6,13 +6,13 @@
   <channel>
     <title>Earspeak 骑行英语</title>
     <link>https://hbdweb123.github.io/earspeak-rh1tujw</link>
-    <description>骑车时听的英语听力训练。逐词慢读（每个词独立完整发音 + 留白跟读）→ 整句慢读 → 整句常速。</description>
+    <description>骑车时听的商务英语。每集一个话题，5~8 句，2~3 分钟：中文 → 逐词慢读 → 整句慢读 → 常速。</description>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 02 Nov 2026 21:40:23 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 03 Nov 2026 21:13:03 +0800</lastBuildDate>
     <generator>Earspeak</generator>
     <atom:link href="https://hbdweb123.github.io/earspeak-rh1tujw/feed.xml" rel="self" type="application/rss+xml"/>
     <itunes:author>老王</itunes:author>
-    <itunes:summary>骑车时听的英语听力训练。逐词慢读（每个词独立完整发音 + 留白跟读）→ 整句慢读 → 整句常速。</itunes:summary>
+    <itunes:summary>骑车时听的商务英语。每集一个话题，5~8 句，2~3 分钟：中文 → 逐词慢读 → 整句慢读 → 常速。</itunes:summary>
     <itunes:explicit>false</itunes:explicit>
     <itunes:type>episodic</itunes:type>
     <itunes:block>Yes</itunes:block>
@@ -23,21 +23,21 @@
       <itunes:name>老王</itunes:name>
     </itunes:owner>
     <item>
-      <title>节奏对比 B · 慢30% 词间1.5s（单句试听）</title>
-      <description>同一句话（这辆车能带上地铁吗）的更慢版本，词长 0.55~0.97s、停顿 1.5s。用来和 A 对比节奏。</description>
-      <enclosure url="https://hbdweb123.github.io/earspeak-rh1tujw/audio/ep004.m4a" length="110886" type="audio/mp4"/>
-      <guid isPermaLink="false">earspeak-v5-B</guid>
-      <pubDate>Mon, 02 Nov 2026 21:50:00 +0800</pubDate>
-      <itunes:duration>00:29</itunes:duration>
+      <title>我们最晚下周三能确认到货（2/2）</title>
+      <description>我们最晚下周三能确认到货。 / 能告诉我货为什么延误吗？ / 这是我的底线。</description>
+      <enclosure url="https://hbdweb123.github.io/earspeak-rh1tujw/audio/ep006.m4a" length="320851" type="audio/mp4"/>
+      <guid isPermaLink="false">earspeak-006</guid>
+      <pubDate>Tue, 03 Nov 2026 21:13:03 +0800</pubDate>
+      <itunes:duration>01:22</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
     </item>
     <item>
-      <title>节奏对比 A · 慢20% 词间1.2s（完整5句）</title>
-      <description>这辆车能带上地铁吗 / 前面路口左转 / 我手机没电了 / 这个多少钱一天 / 最近的修车铺在哪。每个词独立完整发音，词长均匀 0.46~1.17s。</description>
-      <enclosure url="https://hbdweb123.github.io/earspeak-rh1tujw/audio/ep003.m4a" length="556375" type="audio/mp4"/>
-      <guid isPermaLink="false">earspeak-v5-A</guid>
-      <pubDate>Mon, 02 Nov 2026 21:45:00 +0800</pubDate>
-      <itunes:duration>02:22</itunes:duration>
+      <title>我注意到这批货没按计划到，能（1/2）</title>
+      <description>我注意到这批货没按计划到，能说说是什 / 我理解，但我需要一个具体日期。什么时 / 我们把这个写下来。如果再延，需要谈赔</description>
+      <enclosure url="https://hbdweb123.github.io/earspeak-rh1tujw/audio/ep005.m4a" length="635736" type="audio/mp4"/>
+      <guid isPermaLink="false">earspeak-005</guid>
+      <pubDate>Tue, 03 Nov 2026 21:12:35 +0800</pubDate>
+      <itunes:duration>02:29</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
     </item>
   </channel>
