@@ -2,117 +2,1474 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Earspeak 骑行英语</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0d1017">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="口语私教">
+<title>随身口语私教 · 2.0</title>
 <style>
   :root{
-    --bg:#0f1115; --card:#181b22; --line:#2a2f3a;
-    --text:#e8eaef; --dim:#9aa3b2; --accent:#ffd54a; --pink:#ea445a;
+    --bg:#0d1017; --card:#161a24; --card2:#1e2433; --line:#2a3142;
+    --text:#f0f2f8; --dim:#9ba5b8; --dim2:#687285;
+    --accent:#ffd54a; --pink:#ff5470; --green:#4cd97b; --blue:#54a8ff; --purple:#b892ff; --orange:#ff9f43;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
   body{
-    margin:0;padding:20px 16px 48px;background:var(--bg);color:var(--text);
-    font:16px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
-    max-width:560px;margin-inline:auto;
+    background:var(--bg);color:var(--text);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
+    max-width:600px;margin-inline:auto;
+    padding:calc(12px + env(safe-area-inset-top)) 15px calc(44px + env(safe-area-inset-bottom));
+    -webkit-text-size-adjust:100%;
   }
-  h1{font-size:22px;margin:0 0 4px;letter-spacing:.5px}
-  .sub{color:var(--dim);font-size:13px;margin-bottom:20px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
-  .ok{color:#5ed37a}
-  .warn{color:var(--accent)}
-  .ep-title{font-weight:600;font-size:16px;margin-bottom:2px}
-  .ep-meta{color:var(--dim);font-size:12px;margin-bottom:12px}
-  audio{width:100%;margin-top:4px}
-  h2{font-size:15px;margin:0 0 10px;color:var(--accent);letter-spacing:.3px}
-  ol{margin:0;padding-left:20px;font-size:14px;color:var(--text)}
-  ol li{margin-bottom:8px}
-  code{
-    background:#000;border:1px solid var(--line);border-radius:6px;
-    padding:2px 6px;font-size:12px;word-break:break-all;color:var(--accent);
-    display:inline-block;margin:3px 0;
+  /* 顶栏 */
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+  .brand{display:flex;align-items:center;gap:8px}
+  .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#ffe066,#f5b700);color:#1d1600;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;box-shadow:0 3px 10px rgba(255,213,74,.2)}
+  h1{font-size:17.5px;margin:0;letter-spacing:.2px;line-height:1.2}
+  .sub{color:var(--dim2);font-size:11px;margin-top:2px;display:flex;align-items:center;gap:5px}
+  .eng-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block}
+  .eng-dot.warn{background:var(--orange)}
+  .topbtns{display:flex;gap:6px;flex:0 0 auto}
+  .icobtn{
+    position:relative;background:var(--card2);border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:7px 10px;font-size:12px;cursor:pointer;white-space:nowrap;
+    transition:.15s;font-weight:600;font-family:inherit;display:flex;align-items:center;gap:4px;
   }
-  .url-box{
-    background:#000;border:1px solid var(--line);border-radius:10px;
-    padding:10px 12px;font-size:12px;word-break:break-all;color:var(--accent);
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin:8px 0;
-    user-select:all;-webkit-user-select:all;
+  .icobtn:active{background:#293145;transform:scale(.96)}
+  .badge{
+    position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;
+    background:var(--pink);color:#fff;border-radius:9px;font-size:10px;line-height:17px;
+    text-align:center;font-weight:700;
   }
-  .tag{
-    display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;
-    background:rgba(234,68,90,.14);color:var(--pink);border:1px solid rgba(234,68,90,.35);
-    margin-left:6px;vertical-align:middle;
+  .badge:empty{display:none}
+
+  /* 模式切换 */
+  .modes{display:flex;gap:6px;margin-bottom:10px;background:var(--card);padding:4px;border-radius:14px;border:1px solid var(--line)}
+  .mode{
+    flex:1;padding:10px 6px;border-radius:10px;border:0;background:transparent;
+    color:var(--dim);font-size:13.5px;font-weight:700;cursor:pointer;transition:.16s;font-family:inherit;
   }
-  .note{font-size:13px;color:var(--dim);line-height:1.65}
-  .note b{color:var(--text)}
+  .mode.active{background:linear-gradient(180deg,#ffe066,#f5c400);color:#1f1800;box-shadow:0 2px 8px rgba(245,196,0,.22)}
+  .mode.active.scene{background:linear-gradient(180deg,#70b8ff,#3b8eed);color:#001529;box-shadow:0 2px 8px rgba(59,142,237,.25)}
+
+  /* 场景分类切换条 + 输入区 */
+  .cat-bar{display:flex;gap:6px;margin-bottom:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+  .cat-bar::-webkit-scrollbar{display:none}
+  .cat-pill{
+    padding:5px 11px;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;
+    background:var(--card);border:1px solid var(--line);color:var(--dim);transition:.15s;
+  }
+  .cat-pill.on{background:rgba(255,213,74,.14);border-color:rgba(255,213,74,.5);color:var(--accent)}
+  .cat-pill.on.blue{background:rgba(84,168,255,.15);border-color:rgba(84,168,255,.5);color:var(--blue)}
+
+  .inp-wrap{position:relative}
+  textarea{
+    width:100%;min-height:82px;resize:vertical;padding:12px 76px 12px 13px;
+    background:var(--card);border:1.5px solid var(--line);border-radius:15px;
+    color:var(--text);font-size:16px;line-height:1.55;font-family:inherit;
+    outline:none;transition:border-color .18s;
+  }
+  textarea:focus{border-color:rgba(255,213,74,.65)}
+  textarea::placeholder{color:var(--dim2);font-size:14.5px}
+  .inp-tools{position:absolute;right:8px;bottom:10px;display:flex;gap:5px;align-items:center}
+  .tool-ico{
+    width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--card2);
+    color:var(--dim);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    font-family:inherit;transition:.15s;
+  }
+  .tool-ico:active{transform:scale(.92)}
+  .tool-ico.rec{background:rgba(255,84,112,.22);border-color:var(--pink);color:var(--pink);animation:pulse 1s infinite}
+  @keyframes pulse{50%{opacity:.55}}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0 11px}
+  .chip{
+    padding:6px 11px;border-radius:18px;font-size:12.3px;cursor:pointer;
+    background:var(--card2);border:1px solid var(--line);color:var(--dim);transition:.15s;
+  }
+  .chip:active{background:#283044;color:var(--text);transform:scale(.97)}
+  .chip.grp{border-color:rgba(84,168,255,.32);color:#92c7ff}
+
+  /* 语音快捷控制条（常驻大按钮，淘汰难拖小滑杆） */
+  .speed-bar{
+    display:flex;align-items:center;justify-content:space-between;gap:6px;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:7px 10px;margin-bottom:11px;font-size:12px;color:var(--dim);
+  }
+  .spd-group{display:flex;gap:4px;flex:1;justify-content:flex-end}
+  .spd-btn{
+    padding:5px 8px;border-radius:8px;border:1px solid var(--line);background:var(--card2);
+    color:var(--dim);font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s;
+  }
+  .spd-btn.on{background:rgba(255,213,74,.16);border-color:var(--accent);color:var(--accent)}
+  .v-toggle{
+    padding:5px 8px;border-radius:8px;border:1px solid var(--line);background:var(--card2);
+    color:var(--blue);font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;
+  }
+
+  .btn-main{
+    width:100%;padding:14px;border-radius:14px;border:0;cursor:pointer;
+    background:linear-gradient(180deg,#ffe066,#f5c400);color:#1f1800;
+    font-size:16px;font-weight:800;letter-spacing:.4px;transition:transform .1s,filter .15s;font-family:inherit;
+    box-shadow:0 4px 14px rgba(245,196,0,.18);
+  }
+  .btn-main.scene{background:linear-gradient(180deg,#70b8ff,#3b8eed);color:#001529;box-shadow:0 4px 14px rgba(59,142,237,.22)}
+  .btn-main:active{transform:scale(.985);filter:brightness(.94)}
+  .btn-main:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+  /* 状态栏 */
+  #status{margin-top:11px;font-size:13px;color:var(--dim);display:none;align-items:center;justify-content:space-between;gap:9px;padding:11px 13px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+  #status.show{display:flex}
+  #status.err{color:var(--pink);border-color:rgba(255,84,112,.4);background:rgba(255,84,112,.07)}
+  #status.ok{color:var(--green);border-color:rgba(76,217,123,.35)}
+  #status.now{color:var(--accent);border-color:rgba(255,213,74,.45);background:rgba(255,213,74,.07)}
+  .st-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+  .spin{width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;flex:0 0 auto}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .st-stop{padding:4px 10px;border-radius:7px;background:rgba(255,84,112,.2);border:1px solid var(--pink);color:var(--pink);font-size:11.5px;font-weight:700;cursor:pointer;flex:0 0 auto}
+
+  /* 结果卡片 */
+  #result{margin-top:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+  .sec-title{
+    font-size:11.5px;letter-spacing:.8px;color:var(--accent);font-weight:800;
+    margin-bottom:10px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px;
+  }
+  .sec-title.blue{color:var(--blue)}
+  .sec-title.purple{color:var(--purple)}
+  .sec-title.green{color:var(--green)}
+  .sec-title.pink{color:var(--pink)}
+  .sec-title .r{font-size:11px;font-weight:500;color:var(--dim2);letter-spacing:0;text-transform:none}
+
+  .en-line{font-size:21px;line-height:1.55;font-weight:700;letter-spacing:.2px}
+  .w{cursor:pointer;border-radius:6px;padding:1px 3px;margin:0 -1px;transition:background .12s,color .12s;display:inline-block}
+  .w:active,.w.on{background:rgba(255,213,74,.26);color:var(--accent)}
+  .zh-line{color:var(--dim);font-size:13.5px;margin-top:8px}
+
+  /* 播放控制按钮组 */
+  .player{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+  .btn-pl{
+    flex:1;min-width:calc(33% - 6px);padding:11px 6px;border-radius:11px;cursor:pointer;
+    background:var(--card2);border:1px solid var(--line);color:var(--text);
+    font-size:12.8px;font-weight:700;transition:.15s;font-family:inherit;text-align:center;
+  }
+  .btn-pl:active{background:#293145;transform:scale(.97)}
+  .btn-pl.pri{background:rgba(255,213,74,.14);border-color:rgba(255,213,74,.48);color:var(--accent)}
+  .btn-pl.playing{background:rgba(255,84,112,.22);border-color:var(--pink);color:#ff8da0;animation:pulse 1.2s infinite}
+
+  /* 单句卡片 & 死磕循环按钮 */
+  .dlg{padding:13px 0;border-bottom:1px solid rgba(42,49,66,.65)}
+  .dlg:first-of-type{padding-top:2px}
+  .dlg:last-of-type{border-bottom:0;padding-bottom:2px}
+  .dlg-head{display:flex;align-items:center;gap:7px;margin-bottom:6px;flex-wrap:wrap}
+  .who{font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:800;letter-spacing:.3px;flex:0 0 auto}
+  .who.me{background:rgba(255,213,74,.16);color:var(--accent);border:1px solid rgba(255,213,74,.4)}
+  .who.them{background:rgba(84,168,255,.16);color:var(--blue);border:1px solid rgba(84,168,255,.4)}
+  .purpose{font-size:11.8px;color:var(--dim);font-weight:600;flex:1;min-width:0}
+  .dlg-en{font-size:17.5px;font-weight:700;line-height:1.5;margin-bottom:4px;cursor:pointer}
+  .dlg-zh{font-size:13px;color:var(--dim)}
+  .dlg-tip{font-size:12px;color:var(--dim2);line-height:1.55;margin-top:6px;padding-left:9px;border-left:2px solid var(--accent)}
+  .dlg-acts{display:flex;gap:6px;margin-top:9px;align-items:center}
+  .act-mini{
+    padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:var(--card2);
+    color:var(--text);font-size:11.8px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;
+  }
+  .act-mini.loop{border-color:rgba(255,213,74,.4);color:var(--accent);background:rgba(255,213,74,.09)}
+  .act-mini.playing{background:rgba(255,84,112,.22);border-color:var(--pink);color:#ff8da0}
+
+  /* 意群拆解 */
+  .seg{padding:11px 0;border-bottom:1px solid rgba(42,49,66,.65)}
+  .seg:first-of-type{padding-top:2px}
+  .seg:last-of-type{border-bottom:0;padding-bottom:2px}
+  .seg-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .seg-n{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:rgba(84,168,255,.18);color:var(--blue);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .seg-en{font-size:16px;font-weight:700;flex:1;cursor:pointer}
+  .seg-zh{font-size:12.8px;color:var(--dim);margin:0 0 5px 28px}
+  .seg-pts{margin:0 0 0 28px;padding:0;list-style:none}
+  .seg-pts li{font-size:12.3px;line-height:1.55;color:var(--dim2);position:relative;padding-left:12px;margin-bottom:3px}
+  .seg-pts li:before{content:'•';position:absolute;left:0;color:var(--blue)}
+
+  /* 单词与向外联想词汇卡 */
+  .kp{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(42,49,66,.65);align-items:flex-start}
+  .kp:last-child{border-bottom:0;padding-bottom:2px}
+  .kp-main{flex:1;min-width:0;cursor:pointer}
+  .kp-w{font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .tag-badge{font-size:10px;padding:1px 6px;border-radius:12px;font-weight:700}
+  .tag-badge.new{background:rgba(255,84,112,.18);color:var(--pink);border:1px solid rgba(255,84,112,.4)}
+  .tag-badge.assoc{background:rgba(76,217,123,.16);color:var(--green);border:1px solid rgba(76,217,123,.38)}
+  .kp-ph{font-size:11.5px;color:var(--dim2);font-family:ui-monospace,Menlo,monospace;font-weight:400}
+  .kp-zh{font-size:13px;color:var(--accent);font-weight:600;margin-top:2px}
+  .kp-why{font-size:12.4px;line-height:1.55;color:var(--dim);margin-top:2px}
+  .star{
+    flex:0 0 auto;width:34px;height:34px;border-radius:10px;border:1px solid var(--line);
+    background:var(--card2);color:var(--dim2);font-size:16px;cursor:pointer;line-height:1;
+    display:flex;align-items:center;justify-content:center;transition:.15s;font-family:inherit;
+  }
+  .star:active{transform:scale(.9)}
+  .star.on{background:rgba(255,213,74,.18);border-color:rgba(255,213,74,.55);color:var(--accent)}
+
+  .btn-save-all{
+    font-size:11.5px;padding:4px 9px;border-radius:8px;border:1px solid rgba(76,217,123,.4);
+    background:rgba(76,217,123,.12);color:var(--green);font-weight:700;cursor:pointer;font-family:inherit;
+  }
+
+  .alt-row{font-size:14.5px;padding:10px 0;border-bottom:1px solid rgba(42,49,66,.65);display:flex;align-items:center;gap:9px}
+  .alt-row:last-child{border-bottom:0}
+  .tip-row{font-size:13px;line-height:1.6;color:var(--dim);padding:6px 0 6px 15px;position:relative}
+  .tip-row:before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:11px;top:7px}
+
+  /* 历史记录 */
+  .hist-item{padding:10px 0;border-bottom:1px solid rgba(42,49,66,.6);cursor:pointer;font-size:13.5px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .hist-item:last-child{border-bottom:0}
+  .hi-tag{font-size:10.5px;padding:1px 6px;border-radius:6px;font-weight:700;flex:0 0 auto}
+  .hi-tag.sc{background:rgba(84,168,255,.16);color:var(--blue)}
+  .hi-tag.tr{background:rgba(255,213,74,.15);color:var(--accent)}
+  .hi-zh{color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hi-en{color:var(--dim2);font-size:12px;max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+
+  /* 抽屉弹窗（生词本/句子本/闪卡自测/设置） */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+  .modal.show{display:flex}
+  .sheet{
+    width:100%;max-width:600px;max-height:86vh;background:var(--bg);
+    border-radius:22px 22px 0 0;border-top:1px solid var(--line);
+    display:flex;flex-direction:column;animation:up .2s ease-out;
+  }
+  @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .sheet-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 11px;border-bottom:1px solid var(--line);flex:0 0 auto}
+  .sheet-title{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .sheet-close{width:30px;height:30px;border-radius:50%;background:var(--card2);border:1px solid var(--line);color:var(--dim);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+  .sheet-body{overflow-y:auto;padding:13px 16px calc(20px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+  .sheet-foot{padding:10px 16px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);display:flex;gap:8px;flex:0 0 auto;flex-wrap:wrap}
+  .btn-s{flex:1;min-width:110px;padding:11px 8px;border-radius:11px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:12.8px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center}
+  .btn-s.pri{background:rgba(255,213,74,.16);border-color:rgba(255,213,74,.5);color:var(--accent)}
+
+  /* 闪卡自测模式（遮住英文看中文） */
+  .quiz-mask{
+    filter:blur(6px);user-select:none;transition:filter .18s;
+  }
+  .vitem.reveal .quiz-mask{filter:none}
+  .vitem{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid rgba(42,49,66,.65);align-items:flex-start}
+  .vitem:last-child{border-bottom:0}
+  .vitem-main{flex:1;min-width:0;cursor:pointer}
+  .vitem-w{font-size:15.5px;font-weight:700;color:var(--text)}
+  .vitem-ph{font-size:11px;color:var(--dim2);font-family:ui-monospace,Menlo,monospace}
+  .vitem-zh{font-size:13px;color:var(--accent);font-weight:600;margin-top:2px}
+  .vitem-why{font-size:12.2px;color:var(--dim);line-height:1.5;margin-top:2px}
+  .del{flex:0 0 auto;width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--dim2);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .empty{text-align:center;color:var(--dim2);font-size:13.5px;padding:38px 16px;line-height:1.8}
+
+  /* 设置表单 */
+  .cfg-group{margin-bottom:14px}
+  .cfg-label{font-size:12.5px;font-weight:700;color:var(--dim);margin-bottom:6px;display:block}
+  .cfg-inp,.cfg-sel{
+    width:100%;padding:11px 12px;border-radius:11px;border:1px solid var(--line);
+    background:var(--card);color:var(--text);font-size:14px;font-family:inherit;outline:none;
+  }
+  .cfg-inp:focus,.cfg-sel:focus{border-color:var(--accent)}
+  .cfg-note{font-size:11.5px;color:var(--dim2);line-height:1.55;margin-top:5px}
 </style>
 </head>
 <body>
 
-<h1>Earspeak 骑行英语</h1>
-<div class="sub">已重做节奏：每个词独立完整发音，不再切割、不再被连读压缩</div>
-
-<div class="card" style="border-color:rgba(255,213,74,.4)">
-  <div class="ep-title">A 版 · 慢 20% + 词间 1.2 秒 <span class="tag" style="background:rgba(255,213,74,.14);color:#ffd54a;border-color:rgba(255,213,74,.35)">完整 5 句</span></div>
-  <div class="ep-meta">2 分 21 秒 · 5 句 · 48k AAC · 0.53 MB</div>
-  <audio controls preload="metadata" src="audio/ep003.m4a"></audio>
-  <div class="note" style="margin-top:10px">
-    这辆车能带上地铁吗 · 前面路口左转 · 我手机没电了 · 这个多少钱一天 · 最近的修车铺在哪
+<!-- 顶部导航 -->
+<div class="topbar">
+  <div class="brand">
+    <div class="logo">Speak</div>
+    <div>
+      <h1>随身口语私教</h1>
+      <div class="sub" id="engStatus"><span class="eng-dot" id="engDot"></span><span id="engLabel">MiniMax 直连就绪</span></div>
+    </div>
   </div>
-  <div class="note" style="margin-top:8px">
-    <b>词长均匀 0.46~1.17 秒</b>（旧版是 0.21 秒还带截断）。每个词都是独立完整发音，不再被连读压缩。
-  </div>
-</div>
-
-<div class="card">
-  <div class="ep-title">B 版 · 慢 30% + 词间 1.5 秒</div>
-  <div class="ep-meta">29 秒 · 只做第 1 句，用来和 A 对比</div>
-  <audio controls preload="metadata" src="audio/ep004.m4a"></audio>
-  <div class="note" style="margin-top:8px">
-    词长 0.55~0.97 秒、停顿 1.5 秒。听完告诉我要 A 还是要 B（或者说个数我照着调）。
+  <div class="topbtns">
+    <button class="icobtn" id="btnVocab">📒 生词<span class="badge" id="bVocab"></span></button>
+    <button class="icobtn" id="btnSents">⭐ 句子<span class="badge" id="bSents"></span></button>
+    <button class="icobtn" id="btnCfg" title="接口与发音设置">⚙️</button>
   </div>
 </div>
 
-<div class="card">
-  <h2>① 先确认你能听到</h2>
-  <div class="note">
-    上面这条播放器<b>能正常播放</b>，说明你这台手机能访问这个地址。<br>
-    如果点了没反应或一直转圈，说明网络到不了 —— 告诉我，我换国内托管。
+<!-- 两大核心模式 -->
+<div class="modes">
+  <button class="mode active" id="mTranslate">💬 这句英文怎么说</button>
+  <button class="mode scene" id="mScene">🔥 场景救场 · 给我几句</button>
+</div>
+
+<!-- 场景/话题快捷分类切换 -->
+<div class="cat-bar" id="catBar">
+  <div class="cat-pill on" data-cat="social">✨ 街头搭讪 / 社交生活</div>
+  <div class="cat-pill" data-cat="biz">📦 物流催货 / 商务谈判</div>
+  <div class="cat-pill" data-cat="travel">✈️ 旅行消费 / 酒店点单</div>
+</div>
+
+<!-- 输入框 + 语音听写 + 清空 -->
+<div class="inp-wrap">
+  <textarea id="inp" placeholder="输入你想表达的中文，或点右下角麦克风直接说…"></textarea>
+  <div class="inp-tools">
+    <button class="tool-ico" id="btnMic" title="语音直接说">🎤</button>
+    <button class="tool-ico" id="btnClr" title="清空输入">✕</button>
   </div>
 </div>
 
-<div class="card">
-  <h2>② 订阅到播客 App<span class="tag">推荐 Apple 播客</span></h2>
-  <div class="note" style="margin-bottom:8px">把这个地址复制下来：</div>
-  <div class="url-box">https://hbdweb123.github.io/earspeak-rh1tujw/feed.xml</div>
+<!-- 快捷示例标签 -->
+<div class="chips" id="chips"></div>
 
-  <div class="note" style="margin-top:14px">
-    <b>Apple 播客（路径最明确，官方支持）</b><br>
-    打开「播客」→ 底部「资料库」→ 右上角 <b>⋯</b> → 「通过 URL 关注节目」→ 粘贴上面的地址 → 关注
+<!-- 一键语速档位 & 音色切换（淘汰难拖小滑杆） -->
+<div class="speed-bar">
+  <span>🐢 跟读语速</span>
+  <div class="spd-group" id="spdGroup">
+    <button class="spd-btn" data-rate="0.5">0.5x 超慢</button>
+    <button class="spd-btn on" data-rate="0.68">0.7x 慢读</button>
+    <button class="spd-btn" data-rate="0.85">0.85x 跟读</button>
+    <button class="spd-btn" data-rate="1.0">1.0x 原速</button>
   </div>
+  <button class="v-toggle" id="btnVoice">👩 女声</button>
+</div>
 
-  <div class="note" style="margin-top:12px">
-    <b>小宇宙</b><br>
-    打开小宇宙 → 顶部搜索框直接粘贴上面的地址 → 搜索后订阅
+<!-- 生成主按钮 -->
+<button class="btn-main" id="btnGen">生成地道英文 + 联想重点词</button>
+
+<!-- 状态提示栏 -->
+<div id="status">
+  <div class="st-left" id="stLeft"></div>
+  <button class="st-stop" id="stStop" style="display:none">■ 停止朗读</button>
+</div>
+
+<!-- 结果展示区 -->
+<div id="result"></div>
+
+<!-- 历史记录 -->
+<div class="card" id="histCard" style="display:none">
+  <div class="sec-title">🕒 最近练过 <span class="r">点击直接回看并跟读</span></div>
+  <div id="histList"></div>
+</div>
+
+<!-- 生词本弹窗（支持闪卡遮挡自测） -->
+<div class="modal" id="mVocab">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="sheet-title">📒 我的生词本 <span id="vcCount" style="color:var(--dim2);font-size:12px;font-weight:500"></span></div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn-save-all" id="btnVocabQuiz">🫣 遮住英文自测</button>
+        <button class="sheet-close" data-close="mVocab">✕</button>
+      </div>
+    </div>
+    <div class="sheet-body" id="vList"></div>
+    <div class="sheet-foot">
+      <button class="btn-s pri" id="vSpeakAll">🔊 慢速连播全部生词</button>
+      <button class="btn-s" id="vExport">📋 复制备份</button>
+    </div>
   </div>
 </div>
 
-<div class="card">
-  <h2>③ 订阅成功后</h2>
-  <div class="note">
-    · 之后每新增一集，手机播客 App 会自动出现新节目<br>
-    · 锁屏、蓝牙耳机、倍速、断点续播全部走系统原生能力<br>
-    · 骑行时「上一集 / 下一集」就是「上一句 / 下一句」<br>
-    · 音频会下载到手机本地，路上没网也能听
+<!-- 句子本弹窗（支持闪卡自测 & 导出到播客） -->
+<div class="modal" id="mSents">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="sheet-title">⭐ 收藏句子本 <span id="scCount" style="color:var(--dim2);font-size:12px;font-weight:500"></span></div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn-save-all" id="btnSentQuiz">🫣 看中文想英文</button>
+        <button class="sheet-close" data-close="mSents">✕</button>
+      </div>
+    </div>
+    <div class="sheet-body" id="sList"></div>
+    <div class="sheet-foot">
+      <button class="btn-s pri" id="sSpeakAll">🔁 全部慢速跟读一遍</button>
+      <button class="btn-s" id="sExport">📋 导出供骑行播客</button>
+    </div>
   </div>
 </div>
 
-<div class="card">
-  <div class="note">
-    <span class="warn">⚠️ 这个地址是私人工具</span><br>
-    页面已设置不进入 Apple 公开目录（<code>itunes:block</code>），搜不到、也不会有推荐。
-    但技术上它是公开可访问的，请不要转到公开群里。内容是你自己的英语练习句，本身无隐私价值。
+<!-- 引擎与密钥设置弹窗 -->
+<div class="modal" id="mCfg">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="sheet-title">⚙️ AI 引擎与手机免梯子配置</div>
+      <button class="sheet-close" data-close="mCfg">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="cfg-group">
+        <label class="cfg-label">当前主力 AI 通道（决定手机是否需要开 VPN）</label>
+        <select class="cfg-sel" id="cfgProvider">
+          <option value="minimax">🥇 MiniMax Coding Plan（国内 4G/5G 免梯子秒连 · 推荐）</option>
+          <option value="gemini">🥈 Google Gemini（海外或手机开启 VPN 时使用）</option>
+          <option value="workbuddy">🥉 WorkBuddy 云积分通道（需在 WorkBuddy 域名下登录）</option>
+        </select>
+      </div>
+      <div class="cfg-group" id="boxMinimax">
+        <label class="cfg-label">MiniMax 订阅 API Key（只保存在你手机本地浏览器，绝不上传）</label>
+        <input type="password" class="cfg-inp" id="cfgMmKey" placeholder="粘贴 sk-cp-... 或 JWT Key">
+        <div class="cfg-note">💡 手机扫一次电脑生成的「一键激活二维码」即可自动填好，平时无需手动动它。模型默认：<code>MiniMax-M3.1-Flash</code></div>
+      </div>
+      <div class="cfg-group" id="boxGemini">
+        <label class="cfg-label">Google Gemini API Key（备用，仅存在手机本地）</label>
+        <input type="password" class="cfg-inp" id="cfgGmKey" placeholder="AIzaSy...">
+        <div class="cfg-note">在国外出差或挂着梯子时可切换至 Gemini 通道。</div>
+      </div>
+      <div class="cfg-group">
+        <label class="cfg-label">跟读留白时长（读完一句给你留几秒开口跟读）</label>
+        <select class="cfg-sel" id="cfgShadowGap">
+          <option value="2500">2.5 秒（短句快练）</option>
+          <option value="3500" selected>3.5 秒（黄金跟读节奏 · 推荐）</option>
+          <option value="5000">5.0 秒（多想一会儿）</option>
+        </select>
+      </div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-s pri" id="btnSaveCfg">✅ 保存并立即生效</button>
+    </div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js" async></script>
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var K = {
+    hist: 'earspeak_v2_hist',
+    pref: 'earspeak_v2_pref',
+    vocab: 'earspeak_vocab_v1',
+    sents: 'earspeak_sents_v1',
+    cfg: 'earspeak_v2_cfg'
+  };
+
+  /* ================= 1. 零操作扫码自动注入密钥（URL Hash 阅后即焚） ================= */
+  var cfg = {
+    provider: 'minimax',
+    mmKey: '',
+    mmModel: 'MiniMax-M3.1-Flash',
+    gmKey: '',
+    gmModel: 'gemini-4-hydrogen'
+  };
+  try {
+    var savedCfg = JSON.parse(localStorage.getItem(K.cfg) || '{}');
+    Object.keys(cfg).forEach(function (k) { if (savedCfg[k]) cfg[k] = savedCfg[k]; });
+  } catch (e) {}
+
+  // 支持通过 #setup=BASE64_JSON 或 #mmkey=xxx&gmkey=yyy 一键扫码写入手机本地并立刻清除地址栏尾巴
+  (function checkHashSetup() {
+    var h = location.hash || '';
+    if (!h || h.length < 5) return;
+    try {
+      var raw = h.slice(1);
+      var updated = false;
+      if (raw.indexOf('setup=') === 0) {
+        var b64 = decodeURIComponent(raw.slice(6));
+        var obj = JSON.parse(atob(b64));
+        if (obj.mmKey) { cfg.mmKey = obj.mmKey; updated = true; }
+        if (obj.gmKey) { cfg.gmKey = obj.gmKey; updated = true; }
+        if (obj.provider) { cfg.provider = obj.provider; updated = true; }
+      } else {
+        var params = new URLSearchParams(raw);
+        if (params.get('mmkey')) { cfg.mmKey = params.get('mmkey'); updated = true; }
+        if (params.get('gmkey')) { cfg.gmKey = params.get('gmkey'); updated = true; }
+        if (params.get('provider')) { cfg.provider = params.get('provider'); updated = true; }
+      }
+      if (updated) {
+        localStorage.setItem(K.cfg, JSON.stringify(cfg));
+        history.replaceState(null, document.title, location.pathname + location.search);
+        setTimeout(function () {
+          setStatus('🎉 手机专属密钥已自动配好！国内免梯子随时可用', 'ok');
+        }, 300);
+      }
+    } catch (e) {}
+  })();
+
+  var pref = { rate: 0.68, shadowGap: 3500, voiceGender: 'female', cat: 'social' };
+  try {
+    var sp = JSON.parse(localStorage.getItem(K.pref) || '{}');
+    Object.keys(pref).forEach(function (k) { if (sp[k] != null) pref[k] = sp[k]; });
+  } catch (e) {}
+
+  var mode = 'translate';
+  var busy = false;
+  var current = null;
+  var vocabQuizMode = false;
+  var sentQuizMode = false;
+
+  /* ================= 2. 三大高频场景预设库（搭讪社交 / 物流商务 / 旅行生活） ================= */
+  var PRESETS = {
+    social: {
+      translate: [
+        '刚才在街上看到你，觉得你很有气质，想过来认识一下',
+        '你今天穿的这身搭配特别好看，能加个 Instagram 或微信吗？',
+        '我刚来这边不久，附近有什么好喝的咖啡店推荐吗？',
+        '如果周末你有空的话，咱们可以一起喝杯咖啡聊聊天'
+      ],
+      scene: [
+        '在马路上看见一个女生很漂亮，想自然大方上去搭讪认识她、要个联系方式',
+        '在咖啡馆/酒吧看到心仪的女生，想破冰开启聊天，不显得油腻唐突',
+        '和刚认识的外国女生第一次约喝咖啡，怎么夸她并聊些轻松的话题',
+        '去当地按摩店/SPA馆，上门咨询有哪些按摩项目、时长、价格和力度要求'
+      ]
+    },
+    biz: {
+      translate: [
+        '这批货为什么比原定计划晚了整整一周？今天必须给我准确到港时间',
+        '海关清关到底卡在哪个环节了？需要我们补充什么单据？',
+        '如果下周三之前还不能进仓，这笔订单的延误损失需要你们承担',
+        '咱们合作这么久了，这次付款账期能不能再放宽15天？'
+      ],
+      scene: [
+        '物流供应商把我的货延误了，我要去追问真实原因、逼他给出确切到货时间（ETA）',
+        '货到目的港了，客户突然以市场不好为由要求降价 15%，我要稳住他但守住底线',
+        '供应商要求必须 100% 先款后货，我想谈成 30% 定金 + 见提单付尾款',
+        '仓库验货发现有一批外包装破损、次品率超标，找工厂交涉返工或扣款'
+      ]
+    },
+    travel: {
+      translate: [
+        '不好意思，我预订了今晚的大床房，请问可以帮我升级个安静的高楼层吗？',
+        '这道菜不要放香菜，另外帮我拿一份冰水和买单，谢谢',
+        '我的行李箱在托运时轮子摔坏了，请问去哪里办理索赔手续？',
+        '去市中心打车大概多少钱？怎么走不会堵车？'
+      ],
+      scene: [
+        '在国外餐厅点单，想让服务员推荐招牌菜、询问忌口，最后结账',
+        '在机场发现托运行李延误还没到，找航司柜台交涉登记并要求送到酒店',
+        '租车或包车跟当地司机谈价格、确认路线和等待时间',
+        '身体有点不舒服（比如肩膀疼或感冒），去当地药店让药剂师推荐非处方药'
+      ]
+    }
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function readJSON(k, dflt) {
+    try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(dflt)); } catch (e) { return dflt; }
+  }
+  function writeJSON(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; }
+  }
+
+  function updateEngineBadge() {
+    var dot = $('engDot'), lbl = $('engLabel');
+    if (cfg.provider === 'minimax') {
+      if (cfg.mmKey) {
+        dot.className = 'eng-dot';
+        lbl.textContent = 'MiniMax 免梯直连 · 极速';
+      } else {
+        dot.className = 'eng-dot warn';
+        lbl.textContent = '点右上角 ⚙️ 填入或扫码激活密钥';
+      }
+    } else if (cfg.provider === 'gemini') {
+      dot.className = cfg.gmKey ? 'eng-dot' : 'eng-dot warn';
+      lbl.textContent = cfg.gmKey ? 'Gemini 通道（需开 VPN）' : 'Gemini 未填 Key';
+    } else {
+      dot.className = 'eng-dot';
+      lbl.textContent = 'WorkBuddy 积分通道';
+    }
+  }
+
+  function setStatus(msg, kind, showStop) {
+    var el = $('status'), left = $('stLeft'), stp = $('stStop');
+    if (!msg) { el.className = ''; left.innerHTML = ''; stp.style.display = 'none'; return; }
+    el.className = 'show ' + (kind || '');
+    left.innerHTML = (kind === 'busy' ? '<div class="spin"></div>' : '') + '<div>' + esc(msg) + '</div>';
+    stp.style.display = showStop ? '' : 'none';
+  }
+
+  /* ================= 3. 语音合成与「三阶慢速死磕循环」引擎 ================= */
+  var voices = { female: null, male: null, zh: null };
+  function pickVoices() {
+    if (!('speechSynthesis' in window)) return;
+    var list = window.speechSynthesis.getVoices() || [];
+    if (!list.length) return;
+    var en = list.filter(function (v) { return /^en/i.test(v.lang); });
+    voices.female = en.filter(function (v) { return /Samantha|Ava|Allison|Google US English|Victoria|Karen/i.test(v.name); })[0]
+      || en.filter(function (v) { return /en[-_]US/i.test(v.lang); })[0] || en[0] || null;
+    voices.male = en.filter(function (v) { return /Daniel|Alex|Tom|Aaron|Arthur|Fred|Google UK English Male/i.test(v.name); })[0]
+      || en[1] || voices.female;
+    var zh = list.filter(function (v) { return /^zh/i.test(v.lang); });
+    voices.zh = zh.filter(function (v) { return /Ting-Ting|Meijia|zh[-_]CN/i.test(v.name + ' ' + v.lang); })[0] || zh[0] || null;
+  }
+  if ('speechSynthesis' in window) { pickVoices(); window.speechSynthesis.onvoiceschanged = pickVoices; }
+
+  var speakSeq = 0;
+  function stopSpeak() {
+    speakSeq++;
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    document.querySelectorAll('.playing').forEach(function (b) { b.classList.remove('playing'); });
+    setStatus('');
+  }
+  $('stStop').addEventListener('click', stopSpeak);
+
+  function currentEnVoice() {
+    return pref.voiceGender === 'male' ? (voices.male || voices.female) : (voices.female || voices.male);
+  }
+
+  function speakSteps(steps, onDone, loopForever) {
+    if (!('speechSynthesis' in window)) { setStatus('当前浏览器不支持语音朗读', 'err'); return; }
+    var mySeq = ++speakSeq, i = 0;
+    function finish() { if (mySeq === speakSeq && onDone) onDone(); }
+    function next() {
+      if (mySeq !== speakSeq) return;
+      if (i >= steps.length) {
+        if (loopForever) { i = 0; } else { return finish(); }
+      }
+      var st = steps[i++];
+      if (st.status) setStatus(st.status, 'now', true);
+      var u = new SpeechSynthesisUtterance(st.text);
+      u.rate = st.rate || pref.rate;
+      u.lang = st.lang || 'en-US';
+      var v = st.lang === 'zh-CN' ? voices.zh : currentEnVoice();
+      if (v) u.voice = v;
+      u.onend = function () {
+        if (mySeq !== speakSeq) return;
+        if (st.gapAfter > 0) setTimeout(next, st.gapAfter); else next();
+      };
+      u.onerror = function () { if (mySeq === speakSeq) setTimeout(next, 120); };
+      try { window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); } catch (e) { finish(); }
+    }
+    next();
+  }
+
+  function speakOne(text, customRate) {
+    stopSpeak();
+    speakSteps([{ text: text, rate: customRate || pref.rate, gapAfter: 0 }]);
+  }
+
+  // 把句子拆成 2~3 个词一组的小意群，实现“词间有停顿的慢速拆读”
+  function splitIntoChunks(sentence) {
+    var byPunct = String(sentence || '').split(/([,.;!?]+)/).reduce(function (acc, cur) {
+      if (/^[,.;!?]+$/.test(cur) && acc.length) acc[acc.length - 1] += cur;
+      else if (cur.trim()) acc.push(cur.trim());
+      return acc;
+    }, []);
+    var chunks = [];
+    byPunct.forEach(function (clause) {
+      var words = clause.split(/\s+/);
+      if (words.length <= 4) {
+        chunks.push(clause);
+      } else {
+        for (var i = 0; i < words.length; i += 3) {
+          chunks.push(words.slice(i, i + 3).join(' '));
+        }
+      }
+    });
+    return chunks.length ? chunks : [sentence];
+  }
+
+  // 核心功能：单句三阶死磕循环（① 慢速分块拆读 → ② 留白跟读 → ③ 自然语速带读，无限循环直到学会）
+  function startSentenceLoop(enText, zhText, btnEl) {
+    var wasPlaying = btnEl && btnEl.classList.contains('playing');
+    stopSpeak();
+    if (wasPlaying) return;
+    if (btnEl) btnEl.classList.add('playing');
+
+    var chunks = splitIntoChunks(enText);
+    var steps = [];
+    if (zhText) {
+      steps.push({ text: zhText, lang: 'zh-CN', rate: 1.05, gapAfter: 500, status: '🔁 死磕循环｜先听中文意思…' });
+    }
+    chunks.forEach(function (c, idx) {
+      steps.push({
+        text: c,
+        rate: Math.max(0.48, pref.rate - 0.08),
+        gapAfter: 650,
+        status: '🐢 第1步·慢速拆读 (' + (idx + 1) + '/' + chunks.length + ')：' + c
+      });
+    });
+    steps.push({
+      text: enText,
+      rate: pref.rate,
+      gapAfter: pref.shadowGap,
+      status: '🗣️ 第2步·慢速整句 → 留白 ' + (pref.shadowGap / 1000).toFixed(1) + ' 秒，请开口跟读！'
+    });
+    steps.push({
+      text: enText,
+      rate: Math.min(0.95, pref.rate + 0.18),
+      gapAfter: 1400,
+      status: '⚡ 第3步·常速巩固（循环中，练熟随时点停止）'
+    });
+
+    speakSteps(steps, function () {
+      if (btnEl) btnEl.classList.remove('playing');
+      setStatus('');
+    }, true);
+  }
+
+  /* ================= 4. 生词本 & 句子本（支持闪卡自测） ================= */
+  function vocabAll() { return readJSON(K.vocab, []); }
+  function sentsAll() { return readJSON(K.sents, []); }
+  function inVocab(p) { return vocabAll().some(function (x) { return x.p.toLowerCase() === String(p).toLowerCase(); }); }
+  function inSents(en) { return sentsAll().some(function (x) { return x.en === en; }); }
+
+  function toggleVocab(item) {
+    var list = vocabAll();
+    var i = list.findIndex(function (x) { return x.p.toLowerCase() === item.p.toLowerCase(); });
+    if (i >= 0) list.splice(i, 1);
+    else list.unshift({ p: item.p, zh: item.zh || '', phonetic: item.phonetic || '', why: item.why || '', at: Date.now() });
+    writeJSON(K.vocab, list);
+    bumpBadges();
+    return i < 0;
+  }
+  function toggleSent(item) {
+    var list = sentsAll();
+    var i = list.findIndex(function (x) { return x.en === item.en; });
+    if (i >= 0) list.splice(i, 1);
+    else list.unshift({ en: item.en, zh: item.zh || '', at: Date.now() });
+    writeJSON(K.sents, list);
+    bumpBadges();
+    return i < 0;
+  }
+  function bumpBadges() {
+    var v = vocabAll().length, s = sentsAll().length;
+    $('bVocab').textContent = v ? v : '';
+    $('bSents').textContent = s ? s : '';
+  }
+
+  function renderVocab() {
+    var list = vocabAll();
+    $('vcCount').textContent = list.length ? '共 ' + list.length + ' 个' : '';
+    $('btnVocabQuiz').textContent = vocabQuizMode ? '👁 显示全部英文' : '🫣 遮住英文自测';
+    if (!list.length) {
+      $('vList').innerHTML = '<div class="empty">还没有收藏的单词。<br>每次查句或学场景时，点「重点词 / 联想词」右边的 ☆ 即可积累进来。</div>';
+      return;
+    }
+    $('vList').innerHTML = list.map(function (x, i) {
+      return '<div class="vitem">' +
+        '<div class="vitem-main" data-say="' + esc(x.p) + '">' +
+          '<div class="vitem-w ' + (vocabQuizMode ? 'quiz-mask' : '') + '">' + esc(x.p) +
+            (x.phonetic ? ' <span class="vitem-ph">' + esc(x.phonetic) + '</span>' : '') +
+          '</div>' +
+          (x.zh ? '<div class="vitem-zh">' + esc(x.zh) + '</div>' : '') +
+          (x.why ? '<div class="vitem-why">' + esc(x.why) + '</div>' : '') +
+        '</div>' +
+        '<button class="del" data-delv="' + i + '">✕</button>' +
+      '</div>';
+    }).join('');
+    $('vList').querySelectorAll('.vitem-main').forEach(function (el) {
+      el.addEventListener('click', function () {
+        el.parentElement.classList.toggle('reveal');
+        speakOne(el.dataset.say, pref.rate);
+      });
+    });
+    $('vList').querySelectorAll('[data-delv]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var l = vocabAll(); l.splice(parseInt(el.dataset.delv, 10), 1);
+        writeJSON(K.vocab, l); bumpBadges(); renderVocab();
+      });
+    });
+  }
+
+  function renderSents() {
+    var list = sentsAll();
+    $('scCount').textContent = list.length ? '共 ' + list.length + ' 句' : '';
+    $('btnSentQuiz').textContent = sentQuizMode ? '👁 显示全部英文' : '🫣 看中文想英文';
+    if (!list.length) {
+      $('sList').innerHTML = '<div class="empty">还没有收藏句子。<br>点任意好句右边的 ☆ 即可收入句子本反复跟读。</div>';
+      return;
+    }
+    $('sList').innerHTML = list.map(function (x, i) {
+      return '<div class="vitem">' +
+        '<div class="vitem-main" data-say="' + esc(x.en) + '">' +
+          (x.zh ? '<div class="vitem-zh" style="margin-bottom:3px">' + esc(x.zh) + '</div>' : '') +
+          '<div class="vitem-w ' + (sentQuizMode ? 'quiz-mask' : '') + '" style="font-size:14.8px">' + esc(x.en) + '</div>' +
+        '</div>' +
+        '<button class="del" data-dels="' + i + '">✕</button>' +
+      '</div>';
+    }).join('');
+    $('sList').querySelectorAll('.vitem-main').forEach(function (el) {
+      el.addEventListener('click', function () {
+        el.parentElement.classList.toggle('reveal');
+        speakOne(el.dataset.say, pref.rate);
+      });
+    });
+    $('sList').querySelectorAll('[data-dels]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var l = sentsAll(); l.splice(parseInt(el.dataset.dels, 10), 1);
+        writeJSON(K.sents, l); bumpBadges(); renderSents();
+      });
+    });
+  }
+
+  /* ================= 5. 全场景 Prompt 设计（短平快实战句 + 词汇向外联想） ================= */
+  var SYS_TRANSLATE =
+    '你是一位实战派英语口语私教，学生是一位常在海外跑业务、也爱交朋友的中国男士（英语中级偏下，追求自然地道、一口气能念完的短句）。\n' +
+    '任务：把学生脑子里想到的中文词或句子，转换成最地道、老外真正在说的英文口语，并帮他顺带联想积累几个重点高频词。\n' +
+    '铁律要求：\n' +
+    '1. 根据语境自动切换语气：如果是搭讪认识女生/日常社交/按摩点单，必须松弛、真诚、自然不油腻；如果是催物流延误/谈合同/砍价，必须专业、干脆、有压迫感。\n' +
+    '2. 主句(en)必须简短好念（6~14个词以内，绝不写冗长书面从句）。\n' +
+    '3. segments 把主句按"呼吸停顿意群"拆成 2~3 小段，方便他慢速跟读。\n' +
+    '4. phrases 提取本句里的 2~3 个核心词/短语；relatedWords 必须向外联想 4 个与该话题强相关的"高频重点单词/短语"帮他每次积累（如问物流晚了，联想 delayed/customs clearance/ETA/compensate；如问街上搭讪，联想 vibe/grab a coffee/keep in touch/compliment）。\n' +
+    '5. alts 给 3 句不同语气或更简短的替换说法（带简短中文适用场景）。\n' +
+    '6. 严格只输出合法 JSON，不要 Markdown 代码块。';
+
+  var USR_TRANSLATE =
+    '我想表达的中文：\n"""\n%TEXT%\n"""\n\n' +
+    '请严格按以下 JSON 格式输出：\n' +
+    '{"zh":"通顺的中文原意","en":"最地道简短的英文主句(6~14词)",' +
+    '"segments":[{"en":"意群短语","zh":"对应中文","points":["发音连读或用法一句话点拨"]}],' +
+    '"phrases":[{"p":"句中核心词","zh":"中文意思","phonetic":"/音标/","why":"怎么用/记忆点","isNew":true}],' +
+    '"relatedWords":[{"p":"向外联想的高频词","zh":"中文意思","phonetic":"/音标/","why":"在这个话题下怎么顺手用上"}],' +
+    '"alts":[{"en":"替换说法1(更短更口语)","zh":"适用语气/中文"},{"en":"替换说法2(更礼貌/得体)","zh":"适用语气/中文"},{"en":"替换说法3(进阶地道)","zh":"适用语气/中文"}]}';
+
+  var SYS_SCENE =
+    '你是一位实战派英语口语私教，学生是一位中国男士（英语中级偏下，需要在真实场景里瞬时拿来就能开口跟读）。\n' +
+    '任务：学生描绘一个他正面对的场景（可能是马路上想认识漂亮女生、去店里按摩点单，也可能是找物流供应商兴师问罪催延误的货），你给他一套"瞬时救场口语锦囊"。\n' +
+    '铁律要求：\n' +
+    '1. 严禁写20个词以上的长难句！每一句英文必须控制在 5~12 个词以内（短平快、一口气能跟读下来）！\n' +
+    '2. 严禁瞎编虚构人名/假运单号（如不要编 Jack、MN-204、Singapore），直接给拿来就能套用的真句子。\n' +
+    '3. dialogues 按实战顺序给 6 句：\n' +
+    '   - 前 4 句为 who:"me"（我方必杀四步：① 破冰开口第一句 → ② 核心诉求/夸赞/追问 → ③ 进一步推进 → ④ 收尾拿结果/要联系方式/锁死期限）；\n' +
+    '   - 后 2 句为 who:"them"（对方在这个场景下最高频的 2 种典型回答，防止学生开口后听不懂对方接什么话）。\n' +
+    '4. phrases 提取本场景必须掌握的 3 个核心短语；relatedWords 额外向外联想 4 个该场景高频重点词汇帮他积累。\n' +
+    '5. tips 给 3 条接地气的实战心理/话术提醒。\n' +
+    '6. 严格只输出合法 JSON，不要 Markdown 代码块。';
+
+  var USR_SCENE =
+    '我现在的场景是：\n"""\n%TEXT%\n"""\n\n' +
+    '请严格按以下 JSON 格式输出：\n' +
+    '{"scene":"一句话概括场景","situation":"这个场景的破冰/博弈关键点(30字内)",' +
+    '"dialogues":[' +
+    '{"who":"me","purpose":"① 破冰第一句","en":"5~12词简短英文","zh":"中文意思","tip":"语气与重音提醒"},' +
+    '{"who":"me","purpose":"② 核心表达","en":"5~12词简短英文","zh":"中文意思","tip":"为什么这么说"},' +
+    '{"who":"me","purpose":"③ 推进/追问","en":"5~12词简短英文","zh":"中文意思","tip":"实战技巧"},' +
+    '{"who":"me","purpose":"④ 收尾拿结果","en":"5~12词简短英文","zh":"中文意思","tip":"注意点"},' +
+    '{"who":"them","purpose":"对方高频回应 A","en":"对方常说的简短英文","zh":"中文意思","tip":"听到这句怎么接"},' +
+    '{"who":"them","purpose":"对方高频回应 B","en":"对方常说的简短英文","zh":"中文意思","tip":"听到这句怎么接"}' +
+    '],' +
+    '"phrases":[{"p":"场景核心词","zh":"中文意思","phonetic":"/音标/","why":"用法点拨","isNew":true}],' +
+    '"relatedWords":[{"p":"顺带记的关联重点词","zh":"中文意思","phonetic":"/音标/","why":"顺手怎么用"}],' +
+    '"tips":["实战要点1","实战要点2","实战要点3"]}';
+
+  /* ================= 6. 三通道大模型调用（MiniMax 免梯主力 + Gemini + WorkBuddy） ================= */
+  async function callMiniMax(sys, usr) {
+    if (!cfg.mmKey) throw new Error('尚未配置 MiniMax 密钥，请扫电脑上的激活二维码或点右上角 ⚙️ 填入');
+    var resp = await fetch('https://api.minimaxi.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + cfg.mmKey.trim(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: cfg.mmModel || 'MiniMax-M3.1-Flash',
+        messages: [
+          { role: 'system', content: sys },
+          { role: 'user', content: usr }
+        ],
+        temperature: mode === 'scene' ? 0.55 : 0.35,
+        max_tokens: 4096
+      })
+    });
+    if (!resp.ok) {
+      var errTxt = await resp.text();
+      throw new Error('MiniMax 接口返回 HTTP ' + resp.status + '：' + errTxt.slice(0, 120));
+    }
+    var data = await resp.json();
+    var msg = data.choices && data.choices[0] && data.choices[0].message;
+    var content = (msg && msg.content) || '';
+    if (!content) throw new Error('MiniMax 返回内容为空');
+    return content;
+  }
+
+  async function callGemini(sys, usr) {
+    if (!cfg.gmKey) throw new Error('尚未配置 Gemini Key，请点右上角 ⚙️ 填入或切回 MiniMax 免梯通道');
+    var model = cfg.gmModel || 'gemini-4-hydrogen';
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(cfg.gmKey.trim());
+    var resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: sys }] },
+        contents: [{ role: 'user', parts: [{ text: usr }] }],
+        generationConfig: { temperature: 0.4, responseMimeType: 'application/json' }
+      })
+    });
+    if (!resp.ok) {
+      var errTxt = await resp.text();
+      throw new Error('Gemini 接口返回 HTTP ' + resp.status + '（国内请确认已开 VPN 或切回 MiniMax）：' + errTxt.slice(0, 100));
+    }
+    var data = await resp.json();
+    return data.candidates[0].content.parts[0].text;
+  }
+
+  var wbCloud = null, wbModelId = null;
+  async function callWorkBuddy(sys, usr) {
+    if (!window.WorkBuddyCloud || !window.WorkBuddyCloud.createWorkBuddyCloud) {
+      throw new Error('WorkBuddy SDK 未加载，建议切换至 MiniMax 免梯直连通道');
+    }
+    if (!wbCloud) {
+      wbCloud = window.WorkBuddyCloud.createWorkBuddyCloud({
+        endpoint: 'https://earspeak.app.workbuddy.host',
+        publishableKey: 'wbpk_cNbVCiZ5GYl6cK0r6SaiHh_wC7BEmD0e238EHLZX9p5xP0apQupoccE',
+        oauthRelayBaseUrl: 'https://www.workbuddy.cn/v2/as/genie-baas/oauth'
+      });
+    }
+    if (!wbModelId) {
+      var models = await wbCloud.llm.models.list();
+      var usable = (models || []).filter(function (m) { return !m.disabled; });
+      if (!usable.length) throw new Error('WorkBuddy 当前无可用模型');
+      wbModelId = usable[0].id;
+    }
+    var answer = '';
+    var stream = wbCloud.llm.chat.completions.create({
+      model: wbModelId,
+      messages: [{ role: 'system', content: sys }, { role: 'user', content: usr }],
+      stream: true,
+      temperature: 0.5,
+      response_format: { type: 'json_object' }
+    });
+    for await (var chunk of stream) {
+      var d = chunk.choices && chunk.choices[0] && chunk.choices[0].delta;
+      if (d && d.content) answer += d.content;
+    }
+    return answer;
+  }
+
+  async function callLLM(sys, usr) {
+    if (cfg.provider === 'minimax') return await callMiniMax(sys, usr);
+    if (cfg.provider === 'gemini') return await callGemini(sys, usr);
+    return await callWorkBuddy(sys, usr);
+  }
+
+  function parseJSON(raw) {
+    var s = String(raw || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+    var m = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (m) s = m[1].trim();
+    var a = s.indexOf('{'), b = s.lastIndexOf('}');
+    if (a >= 0 && b > a) s = s.slice(a, b + 1);
+    return JSON.parse(s);
+  }
+
+  /* ================= 7. 页面渲染（单词点读 + 联想词积累 + 单句死磕循环） ================= */
+  function wordsToHTML(en) {
+    return (String(en || '').match(/[A-Za-z']+[.,!?;:]*|\s+|[^A-Za-z'\s]+/g) || []).map(function (t) {
+      var core = t.replace(/[^A-Za-z']/g, '');
+      if (!core) return esc(t);
+      return '<span class="w" data-w="' + esc(core) + '">' + esc(t) + '</span>';
+    }).join('');
+  }
+
+  function wordCardHTML(title, subtitle, list, isAssoc) {
+    if (!list || !list.length) return '';
+    var vAll = vocabAll();
+    var rows = list.map(function (x) {
+      var saved = vAll.some(function (v) { return v.p.toLowerCase() === String(x.p).toLowerCase(); });
+      return '<div class="kp">' +
+        '<div class="kp-main" data-say="' + esc(x.p) + '">' +
+          '<div class="kp-w">' + esc(x.p) +
+            (x.phonetic ? '<span class="kp-ph">' + esc(x.phonetic) + '</span>' : '') +
+            (isAssoc ? '<span class="tag-badge assoc">联想积累</span>' : (x.isNew ? '<span class="tag-badge new">重点</span>' : '')) +
+          '</div>' +
+          (x.zh ? '<div class="kp-zh">' + esc(x.zh) + '</div>' : '') +
+          (x.why ? '<div class="kp-why">' + esc(x.why) + '</div>' : '') +
+        '</div>' +
+        '<button class="star' + (saved ? ' on' : '') + '" data-vocab="' + esc(x.p) + '" ' +
+          'data-zh="' + esc(x.zh || '') + '" data-ph="' + esc(x.phonetic || '') + '" data-why="' + esc(x.why || '') + '">' +
+          (saved ? '★' : '☆') + '</button>' +
+      '</div>';
+    }).join('');
+    var saveAllBtn = '<button class="btn-save-all" data-save-batch="' + (isAssoc ? 'assoc' : 'phrase') + '">+ 一键全收进生词本</button>';
+    return '<div class="card" style="' + (isAssoc ? 'border-color:rgba(76,217,123,.35)' : '') + '">' +
+      '<div class="sec-title ' + (isAssoc ? 'green' : 'purple') + '">' +
+        '<span>' + title + ' <span class="r">' + subtitle + '</span></span>' + saveAllBtn +
+      '</div>' + rows + '</div>';
+  }
+
+  function bindCommon(d) {
+    var R = $('result');
+    R.querySelectorAll('.w').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+        speakOne(el.dataset.w, Math.max(0.55, pref.rate - 0.05));
+        R.querySelectorAll('.w.on').forEach(function (x) { x.classList.remove('on'); });
+        el.classList.add('on');
+      });
+    });
+    R.querySelectorAll('.kp-main').forEach(function (el) {
+      el.addEventListener('click', function () { speakOne(el.dataset.say, pref.rate); });
+    });
+    R.querySelectorAll('[data-vocab]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var added = toggleVocab({
+          p: btn.dataset.vocab,
+          zh: btn.dataset.zh,
+          phonetic: btn.dataset.ph,
+          why: btn.dataset.why
+        });
+        btn.classList.toggle('on', added);
+        btn.textContent = added ? '★' : '☆';
+        setStatus(added ? '📒 已收进生词本：' + btn.dataset.vocab : '已从生词本移除', added ? 'ok' : '');
+      });
+    });
+    R.querySelectorAll('[data-save-batch]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var arr = btn.dataset.saveBatch === 'assoc' ? (d.relatedWords || []) : (d.phrases || []);
+        var count = 0;
+        arr.forEach(function (item) {
+          if (!inVocab(item.p)) { toggleVocab(item); count++; }
+        });
+        render(d);
+        setStatus('📒 已批量收入 ' + count + ' 个重点词到生词本！', 'ok');
+      });
+    });
+    R.querySelectorAll('[data-star]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var added = toggleSent({ en: btn.dataset.star, zh: btn.dataset.zh || '' });
+        btn.classList.toggle('on', added);
+        btn.textContent = added ? '★' : '☆';
+        setStatus(added ? '⭐ 已收进句子本' : '已从句子本移出', added ? 'ok' : '');
+      });
+    });
+    R.querySelectorAll('[data-loop-en]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        startSentenceLoop(btn.dataset.loopEn, btn.dataset.loopZh || '', btn);
+      });
+    });
+    R.querySelectorAll('[data-slow-en]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var chunks = splitIntoChunks(btn.dataset.slowEn);
+        stopSpeak();
+        btn.classList.add('playing');
+        setStatus('🐢 分词慢速带读中…', 'now', true);
+        speakSteps(chunks.map(function (c) {
+          return { text: c, rate: Math.max(0.48, pref.rate - 0.08), gapAfter: 650 };
+        }), function () {
+          btn.classList.remove('playing');
+          setStatus('');
+        });
+      });
+    });
+  }
+
+  function renderTranslate(d) {
+    var segHTML = (d.segments || []).map(function (s, i) {
+      var pts = (s.points || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
+      return '<div class="seg">' +
+        '<div class="seg-top"><div class="seg-n">' + (i + 1) + '</div>' +
+          '<div class="seg-en" data-say="' + esc(s.en) + '">' + wordsToHTML(s.en) + '</div>' +
+          '<button class="act-mini" data-say="' + esc(s.en) + '">🔊 听</button>' +
+        '</div>' +
+        '<div class="seg-zh">' + esc(s.zh) + '</div>' +
+        (pts ? '<ul class="seg-pts">' + pts + '</ul>' : '') +
+      '</div>';
+    }).join('');
+
+    var altHTML = (d.alts || []).map(function (a) {
+      var en = typeof a === 'string' ? a : (a.en || '');
+      var zh = typeof a === 'string' ? '' : (a.zh || '');
+      var saved = inSents(en);
+      return '<div class="alt-row">' +
+        '<div style="flex:1;cursor:pointer" data-say="' + esc(en) + '">' +
+          '<div style="font-weight:700">' + wordsToHTML(en) + '</div>' +
+          (zh ? '<div style="font-size:12px;color:var(--dim);margin-top:2px">' + esc(zh) + '</div>' : '') +
+        '</div>' +
+        '<button class="act-mini loop" data-loop-en="' + esc(en) + '" data-loop-zh="' + esc(zh) + '">🔁 死磕</button>' +
+        '<button class="star' + (saved ? ' on' : '') + '" style="width:32px;height:32px;font-size:14px" ' +
+          'data-star="' + esc(en) + '" data-zh="' + esc(zh) + '">' + (saved ? '★' : '☆') + '</button>' +
+      '</div>';
+    }).join('');
+
+    var savedMain = inSents(d.en);
+
+    $('result').innerHTML =
+      '<div class="card" style="border-color:rgba(255,213,74,.4)">' +
+        '<div class="sec-title">🎯 最地道说法 <span class="r">点任意单词可单独听发音</span></div>' +
+        '<div class="en-line">' + wordsToHTML(d.en) + '</div>' +
+        (d.zh ? '<div class="zh-line">' + esc(d.zh) + '</div>' : '') +
+        '<div class="player">' +
+          '<button class="btn-pl pri" data-loop-en="' + esc(d.en) + '" data-loop-zh="' + esc(d.zh || '') + '" style="flex:1.5">🔁 死磕这句 (慢拆→跟读→循环)</button>' +
+          '<button class="btn-pl" data-slow-en="' + esc(d.en) + '">🐢 拆词慢读</button>' +
+          '<button class="btn-pl" id="btnWhole">▶ 整句读</button>' +
+          '<button class="star' + (savedMain ? ' on' : '') + '" data-star="' + esc(d.en) + '" data-zh="' + esc(d.zh || '') + '" style="width:42px;height:auto">' + (savedMain ? '★' : '☆') + '</button>' +
+        '</div>' +
+      '</div>' +
+      wordCardHTML('🧠 顺带记这几个关联重点词', '向外联想积累 · 点词发音', d.relatedWords, true) +
+      wordCardHTML('📌 本句核心词拆解', '点词听音 · ☆ 存生词本', d.phrases, false) +
+      (segHTML ? '<div class="card"><div class="sec-title blue">✂️ 按呼吸意群慢读拆解 <span class="r">点意群单独跟读</span></div>' + segHTML + '</div>' : '') +
+      (altHTML ? '<div class="card"><div class="sec-title">🔄 同一意思还能这么说 <span class="r">不同语气替换</span></div>' + altHTML + '</div>' : '');
+
+    bindCommon(d);
+    var R = $('result');
+    R.querySelectorAll('[data-say]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        if (e.target.classList.contains('w')) return;
+        speakOne(el.dataset.say, pref.rate);
+      });
+    });
+    var bw = $('btnWhole');
+    if (bw) bw.addEventListener('click', function () { speakOne(d.en, pref.rate); });
+  }
+
+  function renderScene(d) {
+    var dlgHTML = (d.dialogues || []).map(function (x) {
+      var isMe = x.who === 'me';
+      var saved = inSents(x.en);
+      return '<div class="dlg">' +
+        '<div class="dlg-head">' +
+          '<span class="who ' + (isMe ? 'me' : 'them') + '">' + (isMe ? '🙋‍♂️ 我方必杀句' : '💬 对方可能回') + '</span>' +
+          '<span class="purpose">' + esc(x.purpose || '') + '</span>' +
+          '<button class="star' + (saved ? ' on' : '') + '" style="width:30px;height:30px;font-size:14px" ' +
+            'data-star="' + esc(x.en) + '" data-zh="' + esc(x.zh || '') + '">' + (saved ? '★' : '☆') + '</button>' +
+        '</div>' +
+        '<div class="dlg-en" data-say="' + esc(x.en) + '">' + wordsToHTML(x.en) + '</div>' +
+        (x.zh ? '<div class="dlg-zh">' + esc(x.zh) + '</div>' : '') +
+        (x.tip ? '<div class="dlg-tip">💡 ' + esc(x.tip) + '</div>' : '') +
+        '<div class="dlg-acts">' +
+          '<button class="act-mini loop" data-loop-en="' + esc(x.en) + '" data-loop-zh="' + esc(x.zh || '') + '">🔁 死磕这句 (循环慢跟读)</button>' +
+          '<button class="act-mini" data-slow-en="' + esc(x.en) + '">🐢 拆词慢读</button>' +
+          '<button class="act-mini" data-say="' + esc(x.en) + '">▶ 常速听</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var tipsHTML = (d.tips || []).map(function (t) { return '<div class="tip-row">' + esc(t) + '</div>'; }).join('');
+    var meList = (d.dialogues || []).filter(function (x) { return x.who === 'me'; });
+    var allList = d.dialogues || [];
+
+    $('result').innerHTML =
+      '<div class="card" style="border-color:rgba(84,168,255,.4)">' +
+        '<div class="sec-title blue">🎬 场景救场锦囊 <span class="r">超短句实战 · 每句都能单独死磕</span></div>' +
+        '<div style="font-size:17px;font-weight:800;line-height:1.5">' + esc(d.scene || '') + '</div>' +
+        (d.situation ? '<div class="zh-line" style="margin-top:5px">🎯 策略：' + esc(d.situation) + '</div>' : '') +
+        '<div class="player">' +
+          '<button class="btn-pl pri" id="btnMeShadow" style="flex:1.4">🔁 只练「我说的4句」跟读</button>' +
+          '<button class="btn-pl" id="btnAllShadow">▶ 全程对话带读</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card"><div class="sec-title blue">🗣️ 瞬时实战短句 <span class="r">点单词听单音 · 点死磕反复练</span></div>' + dlgHTML + '</div>' +
+      wordCardHTML('🧠 顺带记这几个场景关联重点词', '每次积累 · 点 ☆ 入生词本', d.relatedWords, true) +
+      wordCardHTML('📌 本场景核心短语', '点词发音', d.phrases, false) +
+      (tipsHTML ? '<div class="card"><div class="sec-title pink">⚡ 现场发挥要点</div>' + tipsHTML + '</div>' : '');
+
+    bindCommon(d);
+    var R = $('result');
+    R.querySelectorAll('[data-say]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        if (e.target.classList.contains('w')) return;
+        speakOne(el.dataset.say, pref.rate);
+      });
+    });
+
+    var bMe = $('btnMeShadow');
+    if (bMe) bMe.addEventListener('click', function () {
+      var list = meList.length ? meList : allList;
+      stopSpeak(); bMe.classList.add('playing');
+      var steps = [];
+      list.forEach(function (item, idx) {
+        if (item.zh) steps.push({ text: item.zh, lang: 'zh-CN', rate: 1.05, gapAfter: 400, status: '第 ' + (idx + 1) + ' 句：' + item.zh });
+        splitIntoChunks(item.en).forEach(function (c) {
+          steps.push({ text: c, rate: Math.max(0.48, pref.rate - 0.08), gapAfter: 600, status: '🐢 慢拆示范：' + c });
+        });
+        steps.push({ text: item.en, rate: pref.rate, gapAfter: pref.shadowGap, status: '🗣️ 留白跟读：' + item.en });
+      });
+      speakSteps(steps, function () { bMe.classList.remove('playing'); setStatus('✅ 我方必杀句跟读完成！', 'ok'); });
+    });
+
+    var bAll = $('btnAllShadow');
+    if (bAll) bAll.addEventListener('click', function () {
+      stopSpeak(); bAll.classList.add('playing');
+      var steps = [];
+      allList.forEach(function (item, idx) {
+        steps.push({
+          text: item.en,
+          rate: pref.rate,
+          gapAfter: pref.shadowGap,
+          status: (item.who === 'me' ? '🙋‍♂️ 我说' : '💬 对方') + ' (' + (idx + 1) + '/' + allList.length + ')：请跟读…'
+        });
+      });
+      speakSteps(steps, function () { bAll.classList.remove('playing'); setStatus('✅ 全程跟读完成', 'ok'); });
+    });
+  }
+
+  function render(d) {
+    current = d;
+    if (d.mode === 'scene') renderScene(d); else renderTranslate(d);
+  }
+
+  /* ================= 8. 历史记录 ================= */
+  function loadHist() { return readJSON(K.hist, []); }
+  function pushHist(d) {
+    var key = d.mode === 'scene' ? (d.scene || '') : (d.en || '');
+    var h = loadHist().filter(function (x) { return x.key !== key; });
+    h.unshift({
+      key: key,
+      label: d.rawInput || d.zh || d.scene || '',
+      sub: d.mode === 'scene' ? ((d.dialogues || []).length + ' 句短实战') : (d.en || ''),
+      mode: d.mode,
+      data: d
+    });
+    h = h.slice(0, 30);
+    writeJSON(K.hist, h);
+    renderHist();
+  }
+  function renderHist() {
+    var h = loadHist();
+    if (!h.length) { $('histCard').style.display = 'none'; return; }
+    $('histCard').style.display = '';
+    $('histList').innerHTML = h.map(function (x, i) {
+      return '<div class="hist-item" data-i="' + i + '">' +
+        '<span class="hi-tag ' + (x.mode === 'scene' ? 'sc' : 'tr') + '">' + (x.mode === 'scene' ? '场景' : '查句') + '</span>' +
+        '<div class="hi-zh">' + esc(x.label || '') + '</div>' +
+        '<div class="hi-en">' + esc(x.sub || '') + '</div></div>';
+    }).join('');
+    $('histList').querySelectorAll('.hist-item').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var x = loadHist()[parseInt(el.dataset.i, 10)];
+        if (x && x.data) {
+          setMode(x.data.mode || 'translate', true);
+          $('inp').value = x.label || '';
+          render(x.data);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    });
+  }
+
+  /* ================= 9. 模式、分类与语音输入交互 ================= */
+  function renderChips() {
+    var catObj = PRESETS[pref.cat] || PRESETS.social;
+    var list = catObj[mode] || [];
+    $('chips').innerHTML = list.map(function (t) {
+      return '<div class="chip' + (mode === 'scene' ? ' grp' : '') + '">' + esc(t) + '</div>';
+    }).join('');
+    $('chips').querySelectorAll('.chip').forEach(function (c) {
+      c.addEventListener('click', function () {
+        $('inp').value = c.textContent.trim();
+        generate();
+      });
+    });
+  }
+
+  function setMode(m, silent) {
+    mode = m;
+    $('mTranslate').classList.toggle('active', m === 'translate');
+    $('mScene').classList.toggle('active', m === 'scene');
+    var g = $('btnGen');
+    g.classList.toggle('scene', m === 'scene');
+    g.textContent = m === 'scene' ? '🔥 生成场景短句 + 联想重点词' : '✨ 生成地道英文 + 联想重点词';
+    $('inp').placeholder = m === 'scene'
+      ? '描绘你的场景：如「马路上看见漂亮女生想搭讪认识」或「找物流商催延误的货」…'
+      : '输入你想说的中文词或句子，马上告诉你怎么说最地道…';
+    renderChips();
+    if (!silent) { stopSpeak(); $('result').innerHTML = ''; setStatus(''); current = null; }
+  }
+
+  // 分类标签点击
+  $('catBar').querySelectorAll('.cat-pill').forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      pref.cat = pill.dataset.cat;
+      writeJSON(K.pref, pref);
+      $('catBar').querySelectorAll('.cat-pill').forEach(function (p) {
+        p.classList.toggle('on', p === pill);
+      });
+      renderChips();
+    });
+  });
+
+  // 语速四档大按钮 + 男女声切换
+  function syncSpeedUI() {
+    $('spdGroup').querySelectorAll('.spd-btn').forEach(function (b) {
+      b.classList.toggle('on', Math.abs(parseFloat(b.dataset.rate) - pref.rate) < 0.03);
+    });
+    $('btnVoice').textContent = pref.voiceGender === 'male' ? '👨 男声' : '👩 女声';
+  }
+  $('spdGroup').querySelectorAll('.spd-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      pref.rate = parseFloat(b.dataset.rate);
+      writeJSON(K.pref, pref);
+      syncSpeedUI();
+      if (current && current.en) speakOne(current.en, pref.rate);
+    });
+  });
+  $('btnVoice').addEventListener('click', function () {
+    pref.voiceGender = pref.voiceGender === 'male' ? 'female' : 'male';
+    writeJSON(K.pref, pref);
+    syncSpeedUI();
+    speakOne('Hello, let us practice together.', pref.rate);
+  });
+
+  // 语音识别输入（Web Speech API）
+  var recognition = null, isRec = false;
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.lang = 'zh-CN';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.onresult = function (e) {
+      var txt = e.results && e.results[0] && e.results[0][0] && e.results[0][0].transcript;
+      if (txt) {
+        $('inp').value = ($('inp').value ? $('inp').value + ' ' : '') + txt;
+        setStatus('🎤 已识别：' + txt, 'ok');
+      }
+    };
+    recognition.onend = function () {
+      isRec = false;
+      $('btnMic').classList.remove('rec');
+    };
+    recognition.onerror = function () {
+      isRec = false;
+      $('btnMic').classList.remove('rec');
+      setStatus('提示：也可直接点手机输入法键盘右下角的「🎤麦克风」语音输入', '');
+    };
+  }
+  $('btnMic').addEventListener('click', function () {
+    if (!recognition) {
+      $('inp').focus();
+      setStatus('💡 请直接点手机键盘右下角的「🎤麦克风」按钮说话输入', 'ok');
+      return;
+    }
+    if (isRec) { recognition.stop(); return; }
+    try {
+      isRec = true;
+      $('btnMic').classList.add('rec');
+      setStatus('🎤 请直接说中文场景或句子…', 'now');
+      recognition.start();
+    } catch (e) {
+      isRec = false;
+      $('btnMic').classList.remove('rec');
+    }
+  });
+  $('btnClr').addEventListener('click', function () {
+    $('inp').value = '';
+    $('inp').focus();
+  });
+
+  /* ================= 10. 主生成流程 ================= */
+  function generate() {
+    var text = ($('inp').value || '').trim();
+    if (!text) {
+      setStatus(mode === 'scene' ? '请先输入或点选一个场景' : '请先输入你想说的中文', 'err');
+      return;
+    }
+    if (busy) return;
+    stopSpeak();
+    busy = true;
+    var g = $('btnGen');
+    var isScene = mode === 'scene';
+    g.disabled = true;
+    g.textContent = isScene ? '正在推演短句与关联词…' : '正在拆解地道说法…';
+    setStatus(isScene ? '正在生成 5~12 词实战短句与关联重点词…' : '正在翻译地道口语并向外联想重点词…', 'busy');
+
+    callLLM(
+      isScene ? SYS_SCENE : SYS_TRANSLATE,
+      (isScene ? USR_SCENE : USR_TRANSLATE).replace('%TEXT%', text)
+    )
+      .then(function (raw) {
+        var d = parseJSON(raw);
+        d.mode = isScene ? 'scene' : 'translate';
+        d.rawInput = text;
+        if (isScene && !(d.dialogues || []).length) throw new Error('未返回场景对话，请重试');
+        if (!isScene && !d.en) throw new Error('未返回英文句子，请重试');
+        setStatus(
+          isScene ? '✅ 已生成短句锦囊！点任意句「🔁 死磕这句」开始循环慢跟读' : '✅ 已生成！点「🔁 死磕这句」慢速拆词反复跟读',
+          'ok'
+        );
+        render(d);
+        pushHist(d);
+      })
+      .catch(function (err) {
+        var m = (err && err.message) ? err.message : String(err);
+        if (/需要登录/.test(m)) {
+          setStatus('WorkBuddy 通道需登录；已为你切到 MiniMax 免梯通道，请点右上角 ⚙️ 检查密钥', 'err');
+        } else {
+          setStatus('出错了：' + m, 'err');
+        }
+      })
+      .then(function () {
+        busy = false;
+        g.disabled = false;
+        g.textContent = mode === 'scene' ? '🔥 生成场景短句 + 联想重点词' : '✨ 生成地道英文 + 联想重点词';
+      });
+  }
+
+  /* ================= 11. 弹窗与设置事件绑定 ================= */
+  $('mTranslate').addEventListener('click', function () { setMode('translate'); });
+  $('mScene').addEventListener('click', function () { setMode('scene'); });
+  $('btnGen').addEventListener('click', generate);
+  $('inp').addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); generate(); }
+  });
+
+  $('btnVocab').addEventListener('click', function () { renderVocab(); $('mVocab').classList.add('show'); });
+  $('btnSents').addEventListener('click', function () { renderSents(); $('mSents').classList.add('show'); });
+  $('btnVocabQuiz').addEventListener('click', function () { vocabQuizMode = !vocabQuizMode; renderVocab(); });
+  $('btnSentQuiz').addEventListener('click', function () { sentQuizMode = !sentQuizMode; renderSents(); });
+
+  $('btnCfg').addEventListener('click', function () {
+    $('cfgProvider').value = cfg.provider || 'minimax';
+    $('cfgMmKey').value = cfg.mmKey || '';
+    $('cfgGmKey').value = cfg.gmKey || '';
+    $('cfgShadowGap').value = String(pref.shadowGap || 3500);
+    $('mCfg').classList.add('show');
+  });
+  $('btnSaveCfg').addEventListener('click', function () {
+    cfg.provider = $('cfgProvider').value;
+    cfg.mmKey = $('cfgMmKey').value.trim();
+    cfg.gmKey = $('cfgGmKey').value.trim();
+    pref.shadowGap = parseInt($('cfgShadowGap').value, 10) || 3500;
+    writeJSON(K.cfg, cfg);
+    writeJSON(K.pref, pref);
+    updateEngineBadge();
+    $('mCfg').classList.remove('show');
+    setStatus('✅ 配置已保存在手机本地！', 'ok');
+  });
+
+  document.querySelectorAll('[data-close]').forEach(function (b) {
+    b.addEventListener('click', function () { $(b.dataset.close).classList.remove('show'); });
+  });
+  document.querySelectorAll('.modal').forEach(function (m) {
+    m.addEventListener('click', function (e) { if (e.target === m) m.classList.remove('show'); });
+  });
+
+  $('vSpeakAll').addEventListener('click', function () {
+    var list = vocabAll();
+    if (!list.length) return;
+    stopSpeak();
+    var steps = [];
+    list.forEach(function (x) {
+      steps.push({ text: x.p, rate: Math.max(0.5, pref.rate - 0.08), gapAfter: 600, status: '📒 慢读单词：' + x.p + ' (' + (x.zh || '') + ')' });
+      if (x.zh) steps.push({ text: x.zh, lang: 'zh-CN', rate: 1.05, gapAfter: 400 });
+      steps.push({ text: x.p, rate: pref.rate, gapAfter: 1200 });
+    });
+    speakSteps(steps, function () { setStatus('✅ 生词本全部带读完毕', 'ok'); });
+  });
+
+  $('sSpeakAll').addEventListener('click', function () {
+    var list = sentsAll();
+    if (!list.length) return;
+    stopSpeak();
+    var steps = [];
+    list.forEach(function (x, idx) {
+      if (x.zh) steps.push({ text: x.zh, lang: 'zh-CN', rate: 1.05, gapAfter: 400, status: '⭐ 句子 (' + (idx + 1) + '/' + list.length + ')：' + x.zh });
+      steps.push({ text: x.en, rate: pref.rate, gapAfter: pref.shadowGap, status: '🗣️ 请跟读：' + x.en });
+    });
+    speakSteps(steps, function () { setStatus('✅ 句子本跟读完毕', 'ok'); });
+  });
+
+  function exportJSON(kind) {
+    var data = kind === 'vocab'
+      ? { type: 'earspeak-vocab', at: new Date().toISOString(), items: vocabAll() }
+      : { type: 'earspeak-sentences', at: new Date().toISOString(), items: sentsAll() };
+    var s = JSON.stringify(data, null, 2);
+    try {
+      navigator.clipboard.writeText(s).then(function () {
+        setStatus('📋 已复制 ' + data.items.length + ' 条到剪贴板！', 'ok');
+      }, function () { alert(s); });
+    } catch (e) { alert(s); }
+  }
+  $('vExport').addEventListener('click', function () { exportJSON('vocab'); });
+  $('sExport').addEventListener('click', function () { exportJSON('sents'); });
+
+  // 初始化
+  updateEngineBadge();
+  syncSpeedUI();
+  setMode('translate', true);
+  bumpBadges();
+  renderHist();
+})();
+</script>
 </body>
 </html>
