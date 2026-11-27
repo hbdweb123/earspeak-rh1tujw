@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="口语私教">
-<title>随身口语私教 · 2.1</title>
+<title>随身口语私教 · 2.2</title>
 <style>
   :root{
     --bg:#0d1017; --card:#161a24; --card2:#1e2433; --line:#2a3142;
@@ -278,7 +278,7 @@
   <div class="brand">
     <div class="logo">Speak</div>
     <div>
-      <h1>随身口语私教 <span style="font-size:11px;font-weight:700;color:var(--green);background:rgba(76,217,123,.14);padding:1px 6px;border-radius:6px;vertical-align:middle">v2.1</span></h1>
+      <h1>随身口语私教 <span style="font-size:11px;font-weight:700;color:var(--green);background:rgba(76,217,123,.14);padding:1px 6px;border-radius:6px;vertical-align:middle">v2.2</span></h1>
       <div class="sub" id="engStatus"><span class="eng-dot" id="engDot"></span><span id="engLabel">MiniMax 直连就绪</span></div>
     </div>
   </div>
@@ -477,13 +477,13 @@
     } catch (e) {}
   })();
 
-  var pref = { rate: 0.68, shadowGap: 3500, voiceGender: 'female', cat: 'social' };
+  var pref = { rate: 0.68, shadowGap: 3500, voiceGender: 'female', cat: 'social', mode: 'scene' };
   try {
     var sp = JSON.parse(localStorage.getItem(K.pref) || '{}');
     Object.keys(pref).forEach(function (k) { if (sp[k] != null) pref[k] = sp[k]; });
   } catch (e) {}
 
-  var mode = 'translate';
+  var mode = pref.mode === 'translate' ? 'translate' : 'scene';
   var busy = false;
   var current = null;
   var vocabQuizMode = false;
@@ -539,6 +539,21 @@
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
+  }
+  function asArr(v) {
+    if (v == null) return [];
+    if (Array.isArray(v)) return v;
+    if (typeof v === 'string') return v.trim() ? [v.trim()] : [];
+    if (typeof v === 'object') return [v];
+    return [];
+  }
+  function asStr(v, dflt) {
+    if (v == null) return dflt || '';
+    if (typeof v === 'string') return v.trim();
+    if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+    if (Array.isArray(v)) return v.map(function (x) { return asStr(x); }).filter(Boolean).join('；');
+    if (typeof v === 'object') return asStr(v.text || v.en || v.zh || v.p || v.tip || v.point || v.why || '');
+    return dflt || '';
   }
   function readJSON(k, dflt) {
     try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(dflt)); } catch (e) { return dflt; }
@@ -695,25 +710,39 @@
   }
 
   /* ================= 4. 生词本 & 句子本（支持闪卡自测） ================= */
-  function vocabAll() { return readJSON(K.vocab, []); }
-  function sentsAll() { return readJSON(K.sents, []); }
-  function inVocab(p) { return vocabAll().some(function (x) { return x.p.toLowerCase() === String(p).toLowerCase(); }); }
-  function inSents(en) { return sentsAll().some(function (x) { return x.en === en; }); }
+  function vocabAll() {
+    return asArr(readJSON(K.vocab, [])).filter(function (x) { return x && typeof x === 'object' && asStr(x.p); });
+  }
+  function sentsAll() {
+    return asArr(readJSON(K.sents, [])).filter(function (x) { return x && typeof x === 'object' && asStr(x.en); });
+  }
+  function inVocab(p) {
+    var target = asStr(p).toLowerCase();
+    return target ? vocabAll().some(function (x) { return asStr(x.p).toLowerCase() === target; }) : false;
+  }
+  function inSents(en) {
+    var target = asStr(en);
+    return target ? sentsAll().some(function (x) { return asStr(x.en) === target; }) : false;
+  }
 
   function toggleVocab(item) {
+    if (!item || !asStr(item.p)) return false;
     var list = vocabAll();
-    var i = list.findIndex(function (x) { return x.p.toLowerCase() === item.p.toLowerCase(); });
+    var target = asStr(item.p).toLowerCase();
+    var i = list.findIndex(function (x) { return asStr(x.p).toLowerCase() === target; });
     if (i >= 0) list.splice(i, 1);
-    else list.unshift({ p: item.p, zh: item.zh || '', phonetic: item.phonetic || '', why: item.why || '', at: Date.now() });
+    else list.unshift({ p: asStr(item.p), zh: asStr(item.zh), phonetic: asStr(item.phonetic), why: asStr(item.why), at: Date.now() });
     writeJSON(K.vocab, list);
     bumpBadges();
     return i < 0;
   }
   function toggleSent(item) {
+    if (!item || !asStr(item.en)) return false;
     var list = sentsAll();
-    var i = list.findIndex(function (x) { return x.en === item.en; });
+    var target = asStr(item.en);
+    var i = list.findIndex(function (x) { return asStr(x.en) === target; });
     if (i >= 0) list.splice(i, 1);
-    else list.unshift({ en: item.en, zh: item.zh || '', at: Date.now() });
+    else list.unshift({ en: target, zh: asStr(item.zh), at: Date.now() });
     writeJSON(K.sents, list);
     bumpBadges();
     return i < 0;
@@ -974,17 +1003,112 @@
   }
 
   function parseJSON(raw) {
-    var s = String(raw || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+    var s = String(raw || '').replace(/<think>[\s\S]*?<\/think>/gi, '').replace(/<think>[\s\S]*/gi, '').trim();
     var m = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
     if (m) s = m[1].trim();
     var a = s.indexOf('{'), b = s.lastIndexOf('}');
     if (a >= 0 && b > a) s = s.slice(a, b + 1);
-    return JSON.parse(s);
+    try {
+      return JSON.parse(s);
+    } catch (e1) {
+      // 容错修复：去除末尾多余逗号、替换未转义控制字符
+      var cleaned = s.replace(/,\s*([}\]])/g, '$1').replace(/[\u0000-\u0019]+/g, ' ');
+      return JSON.parse(cleaned);
+    }
+  }
+
+  function normWordList(list) {
+    return asArr(list).map(function (x) {
+      if (typeof x === 'string') return { p: x.trim(), zh: '', phonetic: '', why: '', isNew: true };
+      if (!x || typeof x !== 'object') return null;
+      var p = asStr(x.p || x.word || x.phrase || x.en || x.term);
+      if (!p) return null;
+      return {
+        p: p,
+        zh: asStr(x.zh || x.cn || x.meaning || x.translation),
+        phonetic: asStr(x.phonetic || x.ipa || x.pronunciation),
+        why: asStr(x.why || x.tip || x.usage || x.note || x.example),
+        isNew: x.isNew !== false
+      };
+    }).filter(Boolean);
+  }
+
+  function normalizeResult(rawObj, wantedMode, rawInput) {
+    var d = (rawObj && typeof rawObj === 'object') ? rawObj : {};
+    d.rawInput = asStr(d.rawInput || rawInput);
+    d.zh = asStr(d.zh || d.cn || d.rawInput);
+    d.en = asStr(d.en || d.sentence || d.translation);
+    d.scene = asStr(d.scene || d.title || d.rawInput);
+    d.situation = asStr(d.situation || d.strategy || d.summary);
+
+    d.segments = asArr(d.segments || d.chunks).map(function (s) {
+      if (typeof s === 'string') return { en: s.trim(), zh: '', points: [] };
+      if (!s || typeof s !== 'object') return null;
+      var en = asStr(s.en || s.phrase || s.chunk || s.text);
+      if (!en) return null;
+      return {
+        en: en,
+        zh: asStr(s.zh || s.cn || s.meaning),
+        points: asArr(s.points || s.point || s.tips || s.tip || s.notes || s.why).map(function (pt) {
+          return asStr(pt);
+        }).filter(Boolean)
+      };
+    }).filter(Boolean);
+
+    d.phrases = normWordList(d.phrases || d.keywords || d.words);
+    d.relatedWords = normWordList(d.relatedWords || d.related_words || d.related || d.associations);
+
+    d.alts = asArr(d.alts || d.alternatives).map(function (a) {
+      if (typeof a === 'string') return { en: a.trim(), zh: '' };
+      if (!a || typeof a !== 'object') return null;
+      var en = asStr(a.en || a.text || a.sentence);
+      if (!en) return null;
+      return {
+        en: en,
+        zh: asStr(a.zh || a.cn || a.note || a.scene || a.tone)
+      };
+    }).filter(Boolean);
+
+    d.dialogues = asArr(d.dialogues || d.dialogue || d.sentences || d.lines).map(function (x, idx) {
+      if (typeof x === 'string') return { who: idx < 4 ? 'me' : 'them', purpose: '', en: x.trim(), zh: '', tip: '' };
+      if (!x || typeof x !== 'object') return null;
+      var en = asStr(x.en || x.text || x.sentence);
+      if (!en) return null;
+      var whoRaw = asStr(x.who || x.speaker || x.role).toLowerCase();
+      var isThem = /them|other|partner|her|she|supplier|对方|女/.test(whoRaw);
+      return {
+        who: isThem ? 'them' : 'me',
+        purpose: asStr(x.purpose || x.intent || x.step || x.label),
+        en: en,
+        zh: asStr(x.zh || x.cn || x.meaning || x.translation),
+        tip: asStr(x.tip || x.tips || x.note || x.why)
+      };
+    }).filter(Boolean);
+
+    d.tips = asArr(d.tips || d.tip || d.notes || d.advice).map(function (t) {
+      return asStr(t);
+    }).filter(Boolean);
+
+    // 智能交叉兜底：如果用户选了场景模式但模型只回了 en，或选了查句模式但模型回了 dialogues，自动互相补全，绝不报错
+    if (!d.en && d.segments.length) {
+      d.en = d.segments.map(function (s) { return s.en; }).join(' ');
+    }
+    if (!d.en && d.dialogues.length) {
+      d.en = d.dialogues[0].en;
+    }
+    if (!d.dialogues.length && d.en) {
+      d.dialogues.push({ who: 'me', purpose: '① 核心说法', en: d.en, zh: d.zh, tip: '' });
+      d.alts.forEach(function (a, i) {
+        d.dialogues.push({ who: 'me', purpose: '替换说法 ' + (i + 1), en: a.en, zh: a.zh, tip: '' });
+      });
+    }
+    d.mode = (wantedMode === 'scene' || (!wantedMode && d.mode === 'scene')) ? 'scene' : 'translate';
+    return d;
   }
 
   /* ================= 7. 页面渲染（单词点读 + 联想词积累 + 单句死磕循环） ================= */
   function wordsToHTML(en) {
-    return (String(en || '').match(/[A-Za-z']+[.,!?;:]*|\s+|[^A-Za-z'\s]+/g) || []).map(function (t) {
+    return (asStr(en).match(/[A-Za-z']+[.,!?;:]*|\s+|[^A-Za-z'\s]+/g) || []).map(function (t) {
       var core = t.replace(/[^A-Za-z']/g, '');
       if (!core) return esc(t);
       return '<span class="w" data-w="' + esc(core) + '">' + esc(t) + '</span>';
@@ -992,10 +1116,11 @@
   }
 
   function wordCardHTML(title, subtitle, list, isAssoc) {
-    if (!list || !list.length) return '';
+    var safeList = normWordList(list);
+    if (!safeList.length) return '';
     var vAll = vocabAll();
-    var rows = list.map(function (x) {
-      var saved = vAll.some(function (v) { return v.p.toLowerCase() === String(x.p).toLowerCase(); });
+    var rows = safeList.map(function (x) {
+      var saved = vAll.some(function (v) { return asStr(v.p).toLowerCase() === asStr(x.p).toLowerCase(); });
       return '<div class="kp">' +
         '<div class="kp-main" data-say="' + esc(x.p) + '">' +
           '<div class="kp-w">' + esc(x.p) +
@@ -1088,8 +1213,9 @@
   }
 
   function renderTranslate(d) {
-    var segHTML = (d.segments || []).map(function (s, i) {
-      var pts = (s.points || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
+    d = normalizeResult(d, 'translate', d && d.rawInput);
+    var segHTML = asArr(d.segments).map(function (s, i) {
+      var pts = asArr(s.points).map(function (x) { return '<li>' + esc(asStr(x)) + '</li>'; }).join('');
       return '<div class="seg">' +
         '<div class="seg-top"><div class="seg-n">' + (i + 1) + '</div>' +
           '<div class="seg-en" data-say="' + esc(s.en) + '">' + wordsToHTML(s.en) + '</div>' +
@@ -1100,9 +1226,9 @@
       '</div>';
     }).join('');
 
-    var altHTML = (d.alts || []).map(function (a) {
-      var en = typeof a === 'string' ? a : (a.en || '');
-      var zh = typeof a === 'string' ? '' : (a.zh || '');
+    var altHTML = asArr(d.alts).map(function (a) {
+      var en = typeof a === 'string' ? a : asStr(a && a.en);
+      var zh = typeof a === 'string' ? '' : asStr(a && a.zh);
       var saved = inSents(en);
       return '<div class="alt-row">' +
         '<div style="flex:1;cursor:pointer" data-say="' + esc(en) + '">' +
@@ -1147,7 +1273,8 @@
   }
 
   function renderScene(d) {
-    var dlgHTML = (d.dialogues || []).map(function (x) {
+    d = normalizeResult(d, 'scene', d && d.rawInput);
+    var dlgHTML = asArr(d.dialogues).map(function (x) {
       var isMe = x.who === 'me';
       var saved = inSents(x.en);
       return '<div class="dlg">' +
@@ -1168,9 +1295,9 @@
       '</div>';
     }).join('');
 
-    var tipsHTML = (d.tips || []).map(function (t) { return '<div class="tip-row">' + esc(t) + '</div>'; }).join('');
-    var meList = (d.dialogues || []).filter(function (x) { return x.who === 'me'; });
-    var allList = d.dialogues || [];
+    var tipsHTML = asArr(d.tips).map(function (t) { return '<div class="tip-row">' + esc(asStr(t)) + '</div>'; }).join('');
+    var meList = asArr(d.dialogues).filter(function (x) { return x.who === 'me'; });
+    var allList = asArr(d.dialogues);
 
     $('result').innerHTML =
       '<div class="card" style="border-color:rgba(84,168,255,.4)">' +
@@ -1228,12 +1355,13 @@
   }
 
   function render(d) {
+    d = normalizeResult(d, d && d.mode, d && d.rawInput);
     current = d;
     if (d.mode === 'scene') renderScene(d); else renderTranslate(d);
   }
 
   /* ================= 8. 历史记录 ================= */
-  function loadHist() { return readJSON(K.hist, []); }
+  function loadHist() { return asArr(readJSON(K.hist, [])).filter(function (x) { return x && typeof x === 'object'; }); }
   function pushHist(d) {
     var key = d.mode === 'scene' ? (d.scene || '') : (d.en || '');
     var h = loadHist().filter(function (x) { return x.key !== key; });
@@ -1287,13 +1415,15 @@
   }
 
   function setMode(m, silent) {
-    mode = m;
-    $('mTranslate').classList.toggle('active', m === 'translate');
-    $('mScene').classList.toggle('active', m === 'scene');
+    mode = m === 'translate' ? 'translate' : 'scene';
+    pref.mode = mode;
+    writeJSON(K.pref, pref);
+    $('mTranslate').classList.toggle('active', mode === 'translate');
+    $('mScene').classList.toggle('active', mode === 'scene');
     var g = $('btnGen');
-    g.classList.toggle('scene', m === 'scene');
-    g.textContent = m === 'scene' ? '🔥 生成场景短句 + 联想重点词' : '✨ 生成地道英文 + 联想重点词';
-    $('inp').placeholder = m === 'scene'
+    g.classList.toggle('scene', mode === 'scene');
+    g.textContent = mode === 'scene' ? '🔥 生成场景短句 + 联想重点词' : '✨ 生成地道英文 + 联想重点词';
+    $('inp').placeholder = mode === 'scene'
       ? '描绘你的场景：如「马路上看见漂亮女生想搭讪认识」或「找物流商催延误的货」…'
       : '输入你想说的中文词或句子，马上告诉你怎么说最地道…';
     renderChips();
@@ -1376,8 +1506,12 @@
       $('btnMic').classList.remove('rec');
     }
   });
+  $('inp').addEventListener('input', function () {
+    try { localStorage.setItem('earspeak_draft_inp', $('inp').value); } catch (e) {}
+  });
   $('btnClr').addEventListener('click', function () {
     $('inp').value = '';
+    try { localStorage.removeItem('earspeak_draft_inp'); } catch (e) {}
     $('inp').focus();
   });
 
@@ -1402,13 +1536,12 @@
       (isScene ? USR_SCENE : USR_TRANSLATE).replace('%TEXT%', text)
     )
       .then(function (raw) {
-        var d = parseJSON(raw);
-        d.mode = isScene ? 'scene' : 'translate';
-        d.rawInput = text;
-        if (isScene && !(d.dialogues || []).length) throw new Error('未返回场景对话，请重试');
-        if (!isScene && !d.en) throw new Error('未返回英文句子，请重试');
+        var parsed = parseJSON(raw);
+        var d = normalizeResult(parsed, isScene ? 'scene' : 'translate', text);
+        if (d.mode === 'scene' && !d.dialogues.length) throw new Error('未返回场景对话，请再点一次');
+        if (d.mode !== 'scene' && !d.en) throw new Error('未返回英文句子，请再点一次');
         setStatus(
-          isScene ? '✅ 已生成短句锦囊！点任意句「🔁 死磕这句」开始循环慢跟读' : '✅ 已生成！点「🔁 死磕这句」慢速拆词反复跟读',
+          d.mode === 'scene' ? '✅ 已生成短句锦囊！点任意句「🔁 死磕这句」开始循环慢跟读' : '✅ 已生成！点「🔁 死磕这句」慢速拆词反复跟读',
           'ok'
         );
         render(d);
@@ -1510,7 +1643,11 @@
   // 初始化
   updateEngineBadge();
   syncSpeedUI();
-  setMode('translate', true);
+  setMode(pref.mode || 'scene', true);
+  try {
+    var savedInp = localStorage.getItem('earspeak_draft_inp');
+    if (savedInp) $('inp').value = savedInp;
+  } catch (e) {}
   bumpBadges();
   renderHist();
 })();
