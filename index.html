@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="口语私教">
-<title>随身口语私教 · 2.0</title>
+<title>随身口语私教 · 2.1</title>
 <style>
   :root{
     --bg:#0d1017; --card:#161a24; --card2:#1e2433; --line:#2a3142;
@@ -278,7 +278,7 @@
   <div class="brand">
     <div class="logo">Speak</div>
     <div>
-      <h1>随身口语私教</h1>
+      <h1>随身口语私教 <span style="font-size:11px;font-weight:700;color:var(--green);background:rgba(76,217,123,.14);padding:1px 6px;border-radius:6px;vertical-align:middle">v2.1</span></h1>
       <div class="sub" id="engStatus"><span class="eng-dot" id="engDot"></span><span id="engLabel">MiniMax 直连就绪</span></div>
     </div>
   </div>
@@ -853,12 +853,13 @@
         body: JSON.stringify({
           model: cfg.mmModel || 'MiniMax-M3.1-Flash',
           stream: true,
+          reasoning_effort: 'low',
           messages: [
             { role: 'system', content: sys + '\n【最高优先级指令】请跳过冗长推理思考，第一时间直接输出简洁的 JSON 结果！' },
             { role: 'user', content: usr }
           ],
           temperature: mode === 'scene' ? 0.45 : 0.3,
-          max_tokens: 1800
+          max_tokens: 16384
         })
       });
     } catch (netErr) {
