@@ -839,33 +839,76 @@
     '"relatedWords":[{"p":"顺带记的关联重点词","zh":"中文意思","phonetic":"/音标/","why":"顺手怎么用"}],' +
     '"tips":["实战要点1","实战要点2","实战要点3"]}';
 
-  /* ================= 6. 三通道大模型调用（MiniMax 免梯主力 + Gemini + WorkBuddy） ================= */
+  /* ================= 6. 三通道大模型调用（MiniMax 流式防断连 + Gemini + WorkBuddy） ================= */
   async function callMiniMax(sys, usr) {
-    if (!cfg.mmKey) throw new Error('尚未配置 MiniMax 密钥，请扫电脑上的激活二维码或点右上角 ⚙️ 填入');
-    var resp = await fetch('https://api.minimaxi.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + cfg.mmKey.trim(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: cfg.mmModel || 'MiniMax-M3.1-Flash',
-        messages: [
-          { role: 'system', content: sys },
-          { role: 'user', content: usr }
-        ],
-        temperature: mode === 'scene' ? 0.5 : 0.35,
-        max_tokens: 2048
-      })
-    });
+    if (!cfg.mmKey) throw new Error('尚未配置 MiniMax 密钥，请重新扫一次电脑上的激活二维码，或点右上角 ⚙️ 填入');
+    var resp;
+    try {
+      resp = await fetch('https://api.minimaxi.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + cfg.mmKey.trim(),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: cfg.mmModel || 'MiniMax-M3.1-Flash',
+          stream: true,
+          messages: [
+            { role: 'system', content: sys + '\n【最高优先级指令】请跳过冗长推理思考，第一时间直接输出简洁的 JSON 结果！' },
+            { role: 'user', content: usr }
+          ],
+          temperature: mode === 'scene' ? 0.45 : 0.3,
+          max_tokens: 1800
+        })
+      });
+    } catch (netErr) {
+      throw new Error('网络连接中断 (' + (netErr.message || 'Load failed') + ')。若手机正挂着不稳定 VPN，建议关掉 VPN 直接用国内网络秒连 MiniMax，或点再试一次');
+    }
     if (!resp.ok) {
       var errTxt = await resp.text();
       throw new Error('MiniMax 接口返回 HTTP ' + resp.status + '：' + errTxt.slice(0, 120));
     }
-    var data = await resp.json();
-    var msg = data.choices && data.choices[0] && data.choices[0].message;
-    var content = (msg && msg.content) || '';
-    if (!content) throw new Error('MiniMax 返回内容为空');
+    if (!resp.body || !resp.body.getReader) {
+      var data = await resp.json();
+      var msg = data.choices && data.choices[0] && data.choices[0].message;
+      return (msg && msg.content) || '';
+    }
+    var reader = resp.body.getReader();
+    var decoder = new TextDecoder('utf-8');
+    var buf = '';
+    var content = '';
+    var thinkTicks = 0;
+    while (true) {
+      var res = await reader.read();
+      if (res.done) break;
+      buf += decoder.decode(res.value, { stream: true });
+      var lines = buf.split('\n');
+      buf = lines.pop() || '';
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line || line.indexOf('data:') !== 0) continue;
+        var payload = line.slice(5).trim();
+        if (payload === '[DONE]') continue;
+        try {
+          var evt = JSON.parse(payload);
+          var delta = evt.choices && evt.choices[0] && evt.choices[0].delta;
+          if (delta) {
+            if (delta.content) {
+              content += delta.content;
+            }
+            if (delta.reasoning_content || (content.indexOf('<think>') >= 0 && content.indexOf('</think>') < 0)) {
+              thinkTicks++;
+              if (thinkTicks % 5 === 1) {
+                setStatus('🧠 私教正在针对你的场景定制地道短句…', 'busy');
+              }
+            } else if (content.length > 10) {
+              setStatus('✍️ 正在生成短句与关联重点词 (' + Math.min(99, Math.round(content.length / 8)) + '%)…', 'busy');
+            }
+          }
+        } catch (e) {}
+      }
+    }
+    if (!content) throw new Error('MiniMax 返回内容为空，请再点一次');
     return content;
   }
 
