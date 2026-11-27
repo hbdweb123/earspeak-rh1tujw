@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="口语私教">
-<title>随身口语私教 · 2.2</title>
+<title>随身口语私教 · 2.3</title>
 <style>
   :root{
     --bg:#0d1017; --card:#161a24; --card2:#1e2433; --line:#2a3142;
@@ -144,8 +144,23 @@
 
   .en-line{font-size:21px;line-height:1.55;font-weight:700;letter-spacing:.2px}
   .w{cursor:pointer;border-radius:6px;padding:1px 3px;margin:0 -1px;transition:background .12s,color .12s;display:inline-block}
+  .w.saved{border-bottom:1.5px dashed rgba(255,213,74,.65);color:#ffe999}
   .w:active,.w.on{background:rgba(255,213,74,.26);color:var(--accent)}
   .zh-line{color:var(--dim);font-size:13.5px;margin-top:8px}
+  /* 点词拆解弹窗样式 */
+  .wpop-word{font-size:24px;font-weight:900;color:var(--accent);letter-spacing:.3px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .wpop-ph{font-size:13px;color:var(--dim);font-family:ui-monospace,Menlo,monospace;font-weight:500}
+  .wpop-zh{font-size:16.5px;font-weight:700;color:var(--text);margin-top:8px}
+  .wpop-why{font-size:13.5px;color:var(--dim);line-height:1.6;margin-top:6px;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+  .wpop-sec{font-size:11.5px;font-weight:800;color:var(--green);margin:12px 0 6px;letter-spacing:.5px}
+  .wpop-coll{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px;cursor:pointer}
+  .wpop-coll:active{background:var(--card2)}
+  .wpop-ctx{margin-top:10px;padding:10px 12px;background:rgba(84,168,255,.08);border:1px solid rgba(84,168,255,.28);border-radius:11px;cursor:pointer}
+  .wpop-ctx-en{font-size:13.8px;font-weight:700;color:#b8dbff;line-height:1.45}
+  .wpop-ctx-zh{font-size:12px;color:var(--dim);margin-top:3px}
+  .vitem-ctx{margin-top:6px;padding:7px 9px;background:rgba(84,168,255,.08);border-left:2px solid var(--blue);border-radius:6px;font-size:12px;color:#b8dbff;cursor:pointer;line-height:1.45}
+  .vitem-coll{margin-top:5px;display:flex;flex-wrap:wrap;gap:5px}
+  .vitem-coll span{font-size:11.2px;padding:2px 7px;border-radius:6px;background:rgba(76,217,123,.12);color:var(--green);border:1px solid rgba(76,217,123,.28)}
 
   /* 播放控制按钮组 */
   .player{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
@@ -278,12 +293,12 @@
   <div class="brand">
     <div class="logo">Speak</div>
     <div>
-      <h1>随身口语私教 <span style="font-size:11px;font-weight:700;color:var(--green);background:rgba(76,217,123,.14);padding:1px 6px;border-radius:6px;vertical-align:middle">v2.2</span></h1>
+      <h1>随身口语私教 <span style="font-size:11px;font-weight:700;color:var(--green);background:rgba(76,217,123,.14);padding:1px 6px;border-radius:6px;vertical-align:middle">v2.3</span></h1>
       <div class="sub" id="engStatus"><span class="eng-dot" id="engDot"></span><span id="engLabel">MiniMax 直连就绪</span></div>
     </div>
   </div>
   <div class="topbtns">
-    <button class="icobtn" id="btnVocab">📒 生词<span class="badge" id="bVocab"></span></button>
+    <button class="icobtn" id="btnVocab">📒 单词库<span class="badge" id="bVocab"></span></button>
     <button class="icobtn" id="btnSents">⭐ 句子<span class="badge" id="bSents"></span></button>
     <button class="icobtn" id="btnCfg" title="接口与发音设置">⚙️</button>
   </div>
@@ -344,11 +359,11 @@
   <div id="histList"></div>
 </div>
 
-<!-- 生词本弹窗（支持闪卡遮挡自测） -->
+<!-- 生词本弹窗（支持闪卡遮挡自测 + 原句语境记忆） -->
 <div class="modal" id="mVocab">
   <div class="sheet">
     <div class="sheet-head">
-      <div class="sheet-title">📒 我的生词本 <span id="vcCount" style="color:var(--dim2);font-size:12px;font-weight:500"></span></div>
+      <div class="sheet-title">📒 我的单词库 <span id="vcCount" style="color:var(--dim2);font-size:12px;font-weight:500"></span></div>
       <div style="display:flex;gap:6px;align-items:center">
         <button class="btn-save-all" id="btnVocabQuiz">🫣 遮住英文自测</button>
         <button class="sheet-close" data-close="mVocab">✕</button>
@@ -356,8 +371,24 @@
     </div>
     <div class="sheet-body" id="vList"></div>
     <div class="sheet-foot">
-      <button class="btn-s pri" id="vSpeakAll">🔊 慢速连播全部生词</button>
+      <button class="btn-s pri" id="vSpeakAll">🔊 慢速连播全部单词</button>
       <button class="btn-s" id="vExport">📋 复制备份</button>
+    </div>
+  </div>
+</div>
+
+<!-- 句子内点词即解弹窗（点任意陌生词弹出：慢读 + 释义 + 高频搭配 + 绑原句入库） -->
+<div class="modal" id="mWord">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="sheet-title">🔍 陌生词随手拆解</div>
+      <button class="sheet-close" data-close="mWord">✕</button>
+    </div>
+    <div class="sheet-body" id="wPopBody"></div>
+    <div class="sheet-foot">
+      <button class="btn-s" id="wPopSlow">🐢 慢读这个词</button>
+      <button class="btn-s" id="wPopNorm">▶ 常速读</button>
+      <button class="btn-s pri" id="wPopSave" style="flex:1.5">⭐ 收入我的单词库</button>
     </div>
   </div>
 </div>
@@ -730,11 +761,33 @@
     var list = vocabAll();
     var target = asStr(item.p).toLowerCase();
     var i = list.findIndex(function (x) { return asStr(x.p).toLowerCase() === target; });
-    if (i >= 0) list.splice(i, 1);
-    else list.unshift({ p: asStr(item.p), zh: asStr(item.zh), phonetic: asStr(item.phonetic), why: asStr(item.why), at: Date.now() });
+    if (i >= 0) {
+      list.splice(i, 1);
+    } else {
+      list.unshift({
+        p: asStr(item.p),
+        zh: asStr(item.zh),
+        phonetic: asStr(item.phonetic),
+        why: asStr(item.why),
+        colls: asArr(item.colls).map(function (c) {
+          return typeof c === 'string' ? { en: c, zh: '' } : { en: asStr(c && c.en), zh: asStr(c && c.zh) };
+        }).filter(function (c) { return c.en; }),
+        ctxEn: asStr(item.ctxEn),
+        ctxZh: asStr(item.ctxZh),
+        at: Date.now()
+      });
+    }
     writeJSON(K.vocab, list);
     bumpBadges();
+    refreshSavedWordMarks();
     return i < 0;
+  }
+  function refreshSavedWordMarks() {
+    var R = $('result');
+    if (!R) return;
+    R.querySelectorAll('.w').forEach(function (el) {
+      el.classList.toggle('saved', inVocab(el.dataset.w));
+    });
   }
   function toggleSent(item) {
     if (!item || !asStr(item.en)) return false;
@@ -758,10 +811,20 @@
     $('vcCount').textContent = list.length ? '共 ' + list.length + ' 个' : '';
     $('btnVocabQuiz').textContent = vocabQuizMode ? '👁 显示全部英文' : '🫣 遮住英文自测';
     if (!list.length) {
-      $('vList').innerHTML = '<div class="empty">还没有收藏的单词。<br>每次查句或学场景时，点「重点词 / 联想词」右边的 ☆ 即可积累进来。</div>';
+      $('vList').innerHTML = '<div class="empty">单词库还是空的。<br>在任何场景句子里<b>直接点陌生英文单词</b>，或点底部词卡右边的 ☆，即可随时收进来！</div>';
       return;
     }
     $('vList').innerHTML = list.map(function (x, i) {
+      var collsHTML = asArr(x.colls).length
+        ? '<div class="vitem-coll">' + asArr(x.colls).map(function (c) {
+            var en = typeof c === 'string' ? c : asStr(c && c.en);
+            var zh = typeof c === 'string' ? '' : asStr(c && c.zh);
+            return en ? '<span data-say="' + esc(en) + '">' + esc(en) + (zh ? ' · ' + esc(zh) : '') + '</span>' : '';
+          }).join('') + '</div>'
+        : '';
+      var ctxHTML = x.ctxEn
+        ? '<div class="vitem-ctx" data-say="' + esc(x.ctxEn) + '">🔊 原句：' + esc(x.ctxEn) + (x.ctxZh ? '<div style="color:var(--dim);font-size:11.5px;margin-top:2px">' + esc(x.ctxZh) + '</div>' : '') + '</div>'
+        : '';
       return '<div class="vitem">' +
         '<div class="vitem-main" data-say="' + esc(x.p) + '">' +
           '<div class="vitem-w ' + (vocabQuizMode ? 'quiz-mask' : '') + '">' + esc(x.p) +
@@ -769,20 +832,27 @@
           '</div>' +
           (x.zh ? '<div class="vitem-zh">' + esc(x.zh) + '</div>' : '') +
           (x.why ? '<div class="vitem-why">' + esc(x.why) + '</div>' : '') +
+          collsHTML + ctxHTML +
         '</div>' +
         '<button class="del" data-delv="' + i + '">✕</button>' +
       '</div>';
     }).join('');
     $('vList').querySelectorAll('.vitem-main').forEach(function (el) {
-      el.addEventListener('click', function () {
+      el.addEventListener('click', function (e) {
+        var sub = e.target.closest('[data-say]');
+        if (sub && sub !== el) {
+          e.stopPropagation();
+          speakOne(sub.dataset.say, pref.rate);
+          return;
+        }
         el.parentElement.classList.toggle('reveal');
-        speakOne(el.dataset.say, pref.rate);
+        speakOne(el.dataset.say, Math.max(0.5, pref.rate - 0.08));
       });
     });
     $('vList').querySelectorAll('[data-delv]').forEach(function (el) {
       el.addEventListener('click', function () {
         var l = vocabAll(); l.splice(parseInt(el.dataset.delv, 10), 1);
-        writeJSON(K.vocab, l); bumpBadges(); renderVocab();
+        writeJSON(K.vocab, l); bumpBadges(); refreshSavedWordMarks(); renderVocab();
       });
     });
   }
@@ -1106,12 +1176,144 @@
     return d;
   }
 
-  /* ================= 7. 页面渲染（单词点读 + 联想词积累 + 单句死磕循环） ================= */
+  /* ================= 7. 页面渲染（单词点读 + 点词拆解弹窗 + 联想词积累 + 单句死磕循环） ================= */
+  var SYS_WORD =
+    '你是一位英语口语私教。学生在句子里点了一个陌生英文词，请你结合原句语境，用最简洁接地气的大白话帮他拆解这个词，方便他立刻记住并收进单词库。\n' +
+    '严格只输出合法 JSON：{"p":"原词","phonetic":"/美式IPA音标/","zh":"在这句话里的精准中文意思(简短)","why":"一句话讲清怎么用、有什么记忆窍门","colls":[{"en":"最常用高频短搭配1","zh":"中文意思"},{"en":"最常用高频短搭配2","zh":"中文意思"}]}';
+
+  var wordLookupCache = {};
+  var activeWordItem = null;
+
+  function renderWordPopupContent(item, loading) {
+    activeWordItem = item;
+    var saved = inVocab(item.p);
+    var saveBtn = $('wPopSave');
+    if (saveBtn) {
+      saveBtn.textContent = saved ? '★ 已收入单词库（点此移出）' : '⭐ 收入我的单词库';
+      saveBtn.className = saved ? 'btn-s' : 'btn-s pri';
+    }
+    var colls = asArr(item.colls);
+    var collsHTML = colls.length
+      ? '<div class="wpop-sec">🔥 最常连着用的高频搭配（点一下听发音）</div>' +
+        colls.map(function (c) {
+          var en = typeof c === 'string' ? c : asStr(c && c.en);
+          var zh = typeof c === 'string' ? '' : asStr(c && c.zh);
+          return en ? '<div class="wpop-coll" data-say="' + esc(en) + '"><div><div style="font-weight:700;font-size:14.5px">' + esc(en) + '</div>' +
+            (zh ? '<div style="font-size:12px;color:var(--dim);margin-top:2px">' + esc(zh) + '</div>' : '') + '</div><span>🔊</span></div>' : '';
+        }).join('')
+      : '';
+    var ctxHTML = item.ctxEn
+      ? '<div class="wpop-sec" style="color:var(--blue)">📌 绑定原句记忆（入库时自动保存）</div>' +
+        '<div class="wpop-ctx" data-say="' + esc(item.ctxEn) + '">' +
+          '<div class="wpop-ctx-en">🔊 ' + esc(item.ctxEn) + '</div>' +
+          (item.ctxZh ? '<div class="wpop-ctx-zh">' + esc(item.ctxZh) + '</div>' : '') +
+        '</div>'
+      : '';
+
+    $('wPopBody').innerHTML =
+      '<div class="wpop-word">' + esc(item.p) + (item.phonetic ? '<span class="wpop-ph">' + esc(item.phonetic) + '</span>' : '') + '</div>' +
+      (loading
+        ? '<div style="display:flex;align-items:center;gap:9px;margin:14px 0;color:var(--dim);font-size:13.5px"><div class="spin"></div>正在结合原句拆解意思与高频搭配…</div>'
+        : '<div class="wpop-zh">' + esc(item.zh || '点击下方按钮收进单词库') + '</div>' +
+          (item.why ? '<div class="wpop-why">💡 ' + esc(item.why) + '</div>' : '') +
+          collsHTML
+      ) + ctxHTML;
+
+    $('wPopBody').querySelectorAll('[data-say]').forEach(function (el) {
+      el.addEventListener('click', function () { speakOne(el.dataset.say, pref.rate); });
+    });
+  }
+
+  function findLocalWordInfo(word) {
+    var key = asStr(word).toLowerCase();
+    if (!key) return null;
+    if (wordLookupCache[key]) return wordLookupCache[key];
+    var vMatch = vocabAll().find(function (x) { return asStr(x.p).toLowerCase() === key; });
+    if (vMatch) return vMatch;
+    if (current) {
+      var pool = asArr(current.phrases).concat(asArr(current.relatedWords));
+      var cMatch = pool.find(function (x) {
+        var xp = asStr(x.p).toLowerCase();
+        return xp === key || xp.split(/\s+/).indexOf(key) >= 0;
+      });
+      if (cMatch && cMatch.zh && asStr(cMatch.p).toLowerCase() === key) return cMatch;
+    }
+    return null;
+  }
+
+  function openWordPopup(word, ctxEn, ctxZh) {
+    var cleanW = asStr(word).replace(/^[^A-Za-z']+|[^A-Za-z']+$/g, '');
+    if (!cleanW) return;
+    // 立刻慢速读一遍这个单词，零延迟反馈
+    speakOne(cleanW, Math.max(0.48, pref.rate - 0.1));
+    $('mWord').classList.add('show');
+
+    var local = findLocalWordInfo(cleanW);
+    if (local && local.zh && asArr(local.colls).length) {
+      renderWordPopupContent({
+        p: local.p || cleanW,
+        phonetic: local.phonetic || '',
+        zh: local.zh,
+        why: local.why || '',
+        colls: local.colls,
+        ctxEn: ctxEn || local.ctxEn || '',
+        ctxZh: ctxZh || local.ctxZh || ''
+      }, false);
+      return;
+    }
+
+    // 先展示已有释义或加载态，同时后台 1~2 秒调 AI 补齐精准释义与高频搭配
+    renderWordPopupContent({
+      p: cleanW,
+      phonetic: (local && local.phonetic) || '',
+      zh: (local && local.zh) || '',
+      why: (local && local.why) || '',
+      colls: [],
+      ctxEn: ctxEn || '',
+      ctxZh: ctxZh || ''
+    }, !(local && local.zh));
+
+    var usrPrompt = '陌生单词：' + cleanW + (ctxEn ? '\n所在原句：' + ctxEn : '') + (ctxZh ? '\n原句中文：' + ctxZh : '');
+    callLLM(SYS_WORD, usrPrompt)
+      .then(function (raw) {
+        var obj = parseJSON(raw);
+        var fullItem = {
+          p: cleanW,
+          phonetic: asStr(obj.phonetic || (local && local.phonetic)),
+          zh: asStr(obj.zh || (local && local.zh)),
+          why: asStr(obj.why || (local && local.why)),
+          colls: asArr(obj.colls || obj.collocations).map(function (c) {
+            return typeof c === 'string' ? { en: c, zh: '' } : { en: asStr(c && (c.en || c.p)), zh: asStr(c && c.zh) };
+          }).filter(function (c) { return c.en; }),
+          ctxEn: ctxEn || '',
+          ctxZh: ctxZh || ''
+        };
+        wordLookupCache[cleanW.toLowerCase()] = fullItem;
+        if (activeWordItem && activeWordItem.p.toLowerCase() === cleanW.toLowerCase()) {
+          renderWordPopupContent(fullItem, false);
+        }
+      })
+      .catch(function (err) {
+        if (activeWordItem && activeWordItem.p.toLowerCase() === cleanW.toLowerCase()) {
+          renderWordPopupContent({
+            p: cleanW,
+            phonetic: (local && local.phonetic) || '',
+            zh: (local && local.zh) || '暂时无法联网解析（可先慢听发音或收入单词库）',
+            why: (local && local.why) || ((err && err.message) ? err.message : ''),
+            colls: [],
+            ctxEn: ctxEn || '',
+            ctxZh: ctxZh || ''
+          }, false);
+        }
+      });
+  }
+
   function wordsToHTML(en) {
     return (asStr(en).match(/[A-Za-z']+[.,!?;:]*|\s+|[^A-Za-z'\s]+/g) || []).map(function (t) {
       var core = t.replace(/[^A-Za-z']/g, '');
       if (!core) return esc(t);
-      return '<span class="w" data-w="' + esc(core) + '">' + esc(t) + '</span>';
+      var isSaved = inVocab(core);
+      return '<span class="w' + (isSaved ? ' saved' : '') + '" data-w="' + esc(core) + '">' + esc(t) + '</span>';
     }).join('');
   }
 
@@ -1147,9 +1349,12 @@
     R.querySelectorAll('.w').forEach(function (el) {
       el.addEventListener('click', function (e) {
         e.stopPropagation();
-        speakOne(el.dataset.w, Math.max(0.55, pref.rate - 0.05));
         R.querySelectorAll('.w.on').forEach(function (x) { x.classList.remove('on'); });
         el.classList.add('on');
+        var ctxBox = el.closest('[data-ctx-en]');
+        var ctxEn = ctxBox ? ctxBox.dataset.ctxEn : (d && d.en ? d.en : '');
+        var ctxZh = ctxBox ? ctxBox.dataset.ctxZh : (d && d.zh ? d.zh : '');
+        openWordPopup(el.dataset.w, ctxEn, ctxZh);
       });
     });
     R.querySelectorAll('.kp-main').forEach(function (el) {
@@ -1245,8 +1450,8 @@
 
     $('result').innerHTML =
       '<div class="card" style="border-color:rgba(255,213,74,.4)">' +
-        '<div class="sec-title">🎯 最地道说法 <span class="r">点任意单词可单独听发音</span></div>' +
-        '<div class="en-line">' + wordsToHTML(d.en) + '</div>' +
+        '<div class="sec-title">🎯 最地道说法 <span class="r">点任意陌生词查释义并入库</span></div>' +
+        '<div class="en-line" data-ctx-en="' + esc(d.en) + '" data-ctx-zh="' + esc(d.zh || '') + '">' + wordsToHTML(d.en) + '</div>' +
         (d.zh ? '<div class="zh-line">' + esc(d.zh) + '</div>' : '') +
         '<div class="player">' +
           '<button class="btn-pl pri" data-loop-en="' + esc(d.en) + '" data-loop-zh="' + esc(d.zh || '') + '" style="flex:1.5">🔁 死磕这句 (慢拆→跟读→循环)</button>' +
@@ -1284,7 +1489,7 @@
           '<button class="star' + (saved ? ' on' : '') + '" style="width:30px;height:30px;font-size:14px" ' +
             'data-star="' + esc(x.en) + '" data-zh="' + esc(x.zh || '') + '">' + (saved ? '★' : '☆') + '</button>' +
         '</div>' +
-        '<div class="dlg-en" data-say="' + esc(x.en) + '">' + wordsToHTML(x.en) + '</div>' +
+        '<div class="dlg-en" data-say="' + esc(x.en) + '" data-ctx-en="' + esc(x.en) + '" data-ctx-zh="' + esc(x.zh || '') + '">' + wordsToHTML(x.en) + '</div>' +
         (x.zh ? '<div class="dlg-zh">' + esc(x.zh) + '</div>' : '') +
         (x.tip ? '<div class="dlg-tip">💡 ' + esc(x.tip) + '</div>' : '') +
         '<div class="dlg-acts">' +
@@ -1309,7 +1514,7 @@
           '<button class="btn-pl" id="btnAllShadow">▶ 全程对话带读</button>' +
         '</div>' +
       '</div>' +
-      '<div class="card"><div class="sec-title blue">🗣️ 瞬时实战短句 <span class="r">点单词听单音 · 点死磕反复练</span></div>' + dlgHTML + '</div>' +
+      '<div class="card"><div class="sec-title blue">🗣️ 瞬时实战短句 <span class="r">点陌生词查释义入库 · 点死磕反复练</span></div>' + dlgHTML + '</div>' +
       wordCardHTML('🧠 顺带记这几个场景关联重点词', '每次积累 · 点 ☆ 入生词本', d.relatedWords, true) +
       wordCardHTML('📌 本场景核心短语', '点词发音', d.phrases, false) +
       (tipsHTML ? '<div class="card"><div class="sec-title pink">⚡ 现场发挥要点</div>' + tipsHTML + '</div>' : '');
@@ -1574,6 +1779,18 @@
   $('btnSents').addEventListener('click', function () { renderSents(); $('mSents').classList.add('show'); });
   $('btnVocabQuiz').addEventListener('click', function () { vocabQuizMode = !vocabQuizMode; renderVocab(); });
   $('btnSentQuiz').addEventListener('click', function () { sentQuizMode = !sentQuizMode; renderSents(); });
+  $('wPopSlow').addEventListener('click', function () {
+    if (activeWordItem) speakOne(activeWordItem.p, Math.max(0.45, pref.rate - 0.14));
+  });
+  $('wPopNorm').addEventListener('click', function () {
+    if (activeWordItem) speakOne(activeWordItem.p, 0.92);
+  });
+  $('wPopSave').addEventListener('click', function () {
+    if (!activeWordItem) return;
+    var added = toggleVocab(activeWordItem);
+    renderWordPopupContent(activeWordItem, false);
+    setStatus(added ? '📒 已将「' + activeWordItem.p + '」连同原句收入单词库！' : '已从单词库移出：' + activeWordItem.p, added ? 'ok' : '');
+  });
 
   $('btnCfg').addEventListener('click', function () {
     $('cfgProvider').value = cfg.provider || 'minimax';
